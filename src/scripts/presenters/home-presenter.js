@@ -92,18 +92,11 @@ export default class HomePresenter {
     });
 
     if (this._markers.length > 0) {
-      const group = L.featureGroup(this._markers);
+  const first = this._markers[0].getLatLng();
 
-      this._map.fitBounds(group.getBounds(), {
-        padding: [50, 50],
-        maxZoom: 10,
-      });
-
-      // 🔥 FIX PALING PENTING
-      setTimeout(() => {
-        this._map.invalidateSize();
-      }, 300);
-    }
+  // 🔥 pakai setView (STABIL)
+  this._map.setView([first.lat, first.lng], 10);
+}
 
     this._map.on('click', () => {
       this._resetMarkerOpacity();
