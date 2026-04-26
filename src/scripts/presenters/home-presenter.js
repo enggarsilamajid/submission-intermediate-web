@@ -53,35 +53,36 @@ export default class HomePresenter {
   }
 
   _initMap() {
-    this._map = L.map('map').setView([-2.5, 118], 5);
+  this._map = L.map('map').setView([-2.5, 118], 5);
 
-    const osm = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  { attribution: '&copy; OpenStreetMap' }
-);
+  // ✅ layer 1
+  const osm = L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; OpenStreetMap contributors',
+    }
+  );
 
-const osmBW = L.tileLayer(
-  'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
-  { attribution: '&copy; OpenStreetMap' }
-);
+  // ✅ layer 2 (aman, tidak kena block)
+  const osmBW = L.tileLayer(
+    'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; OpenStreetMap contributors',
+    }
+  );
 
-osm.addTo(this._map);
-L.control.layers(baseMaps).addTo(this._map);
+  // ✅ tambahkan layer default ke map
+  osm.addTo(this._map);
 
-    const satelliteLayer = L.tileLayer(
-      'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-      { attribution: '© OpenStreetMap HOT' }
-    );
+  // ✅ BARU definisikan baseMaps
+  const baseMaps = {
+    "Normal": osm,
+    "Black & White": osmBW,
+  };
 
-    defaultLayer.addTo(this._map);
-
-    const baseMaps = {
-      "Default": defaultLayer,
-      "Satellite": satelliteLayer,
-    };
-
-    L.control.layers(baseMaps).addTo(this._map);
-  }
+  // ✅ BARU panggil control
+  L.control.layers(baseMaps).addTo(this._map);
+}
 
   _addMarkers(stories) {
   console.log('MARKER DATA:', stories);
