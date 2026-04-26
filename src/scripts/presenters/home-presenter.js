@@ -46,38 +46,29 @@ export default class HomePresenter {
   }
 
   _initMap() {
-    this._map = L.map('map', {
-      zoomControl: true,
-      scrollWheelZoom: true,
-      preferCanvas: true,
-    });
+  const mapElement = document.getElementById('map');
 
-    const osm = L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors',
-      }
-    );
+  // 🔍 DEBUG WAJIB
+  console.log('MAP ELEMENT:', mapElement);
+  console.log('MAP HEIGHT:', mapElement?.offsetHeight);
 
-    const satellite = L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: 'Tiles &copy; Esri',
-      }
-    );
+  this._map = L.map(mapElement);
 
-    osm.addTo(this._map);
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; OpenStreetMap contributors',
+    }
+  ).addTo(this._map);
 
-    L.control.layers({
-      Default: osm,
-      Satellite: satellite,
-    }).addTo(this._map);
+  // 🔥 set view SETELAH tile
+  this._map.setView([-6.2, 106.8], 10);
 
-    // 🔥 handle resize
-    window.addEventListener('resize', () => {
-      this._map.invalidateSize();
-    });
-  }
+  // 🔥 paksa Leaflet hitung ulang ukuran
+  setTimeout(() => {
+    this._map.invalidateSize();
+  }, 200);
+}
 
   _addMarkers(stories) {
     this._markers = [];
