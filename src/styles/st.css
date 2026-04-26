@@ -15,13 +15,13 @@ body {
 
 .fade-out {
   opacity: 0;
+  transform: translateX(-20px);
 }
 
 .fade-in {
   opacity: 1;
+  transform: translateX(0);
 }
-
-
 
 .container {
   padding-inline: 32px;
