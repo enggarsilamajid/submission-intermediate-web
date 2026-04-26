@@ -1,13 +1,41 @@
+import HomePresenter from '../../presenters/home-presenter';
+
 export default class HomePage {
   async render() {
     return `
-      <section class="container">
-        <h1>Home Page</h1>
+      <section>
+        <h1>Home</h1>
+
+        <div id="map" style="height: 300px;"></div>
+
+        <div id="stories"></div>
       </section>
     `;
   }
 
   async afterRender() {
-    // Do your job here
+    const presenter = new HomePresenter({
+      view: this,
+    });
+
+    presenter.init();
+  }
+
+  renderStories(stories) {
+    const container = document.querySelector('#stories');
+
+    container.innerHTML = stories.map((story) => `
+      <div>
+        <img src="${story.photoUrl}" alt="${story.name}" />
+        <h3>${story.name}</h3>
+        <p>${story.description}</p>
+      </div>
+    `).join('');
+  }
+
+  renderError(message) {
+    document.querySelector('#stories').innerHTML = `
+      <p>Error: ${message}</p>
+    `;
   }
 }
