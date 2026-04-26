@@ -1,10 +1,16 @@
 import CONFIG from '../config';
 
 const ENDPOINTS = {
-  ENDPOINT: `${CONFIG.BASE_URL}/your/endpoint/here`,
+  STORIES: `${CONFIG.BASE_URL}/stories`,
 };
 
-export async function getData() {
-  const fetchResponse = await fetch(ENDPOINTS.ENDPOINT);
-  return await fetchResponse.json();
-}
+const API = {
+  async getStories() {
+    const response = await fetch(ENDPOINTS.STORIES);
+    const responseJson = await response.json();
+
+    return responseJson;
+  },
+};
+
+export default API;
