@@ -1,5 +1,6 @@
 import routes from '../routes/routes';
 import { getActiveRoute } from '../routes/url-parser';
+import { pageTransition } from '../utils/transition';
 
 class App {
   #content = null;
@@ -36,12 +37,14 @@ class App {
   }
 
   async renderPage() {
-    const url = getActiveRoute();
-    const page = routes[url];
+  const url = getActiveRoute();
+  const page = routes[url];
 
+  await pageTransition(this.#content, async () => {
     this.#content.innerHTML = await page.render();
     await page.afterRender();
-  }
+  });
+}
 }
 
 export default App;
