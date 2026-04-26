@@ -6,13 +6,16 @@ export default class HomePresenter {
   }
 
   async init() {
-    try {
-      const response = await API.getStories();
-      const stories = response.listStory;
+  try {
+    const response = await API.getStories();
 
-      this._view.renderStories(stories);
-    } catch (error) {
-      this._view.renderError(error.message);
-    }
+    console.log('RESPONSE:', response); // debug
+
+    const stories = response.listStory || [];
+
+    this._view.renderStories(stories);
+  } catch (error) {
+    this._view.renderError(error.message);
   }
+}
 }
