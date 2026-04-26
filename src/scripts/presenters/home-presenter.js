@@ -1,7 +1,7 @@
 import API from '../data/api';
 import L from 'leaflet';
 
-// ✅ FIX ICON
+// ✅ FIX ICON (CDN)
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -21,23 +21,26 @@ export default class HomePresenter {
       let stories = response.listStory;
 
       if (!stories || stories.length === 0) {
-        stories = [
-          {
-            name: 'Dummy User',
-            description: 'Ini data dummy',
-            photoUrl: 'https://via.placeholder.com/150',
-            lat: -6.2,
-            lon: 106.8,
-          },
-        ];
+        stories = [{
+          name: 'Dummy User',
+          description: 'Ini data dummy',
+          photoUrl: 'https://via.placeholder.com/150',
+          lat: -6.2,
+          lon: 106.8,
+        }];
       }
 
       this._view.renderStories(stories);
 
-      // 🔥 pastikan DOM siap
+      // 🔥 TUNGGU DOM BENAR-BENAR SIAP (bukan setTimeout tebak-tebakan)
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+
+      this._initMap();
+      this._addMarkers(stories);
+
+      // 🔥 FINAL SYNC (sekali, setelah semua siap)
       setTimeout(() => {
-        this._initMap();
-        this._addMarkers(stories);
+        this._map.invalidateSize();
       }, 100);
 
     } catch (error) {
@@ -46,39 +49,55 @@ export default class HomePresenter {
   }
 
   _initMap() {
-  const mapElement = document.getElementById('map');
+    const el = document.getElementById('map');
 
-  // 🔍 DEBUG WAJIB
-  console.log('MAP ELEMENT:', mapElement);
-  console.log('MAP HEIGHT:', mapElement?.offsetHeight);
-
-  this._map = L.map(mapElement);
-
-  L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-      attribution: '&copy; OpenStreetMap contributors',
+    // safety: pastikan elemen ada & punya tinggi
+    if (!el) throw new Error('Element #map tidak ditemukan');
+    if (el.offsetHeight === 0) {
+      console.warn('Map height 0 → cek CSS #map height');
     }
-  ).addTo(this._map);
 
-  // 🔥 set view SETELAH tile
-  this._map.setView([-6.2, 106.8], 10);
+    // ❌ JANGAN setView berkali-kali, cukup sekali di sini
+    this._map = L.map(el, {
+      zoomControl: true,
+      scrollWheelZoom: true,
+    }).setView([-6.2, 106.8], 10);
 
-  // 🔥 paksa Leaflet hitung ulang ukuran
-  setTimeout(() => {
-    this._map.invalidateSize();
-  }, 200);
+    // ✅ Default layer
+    const osm = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        attribution: '&copy; OpenStreetMap contributors',
+      }
+    );
 
-  this._map.whenReady(() => {
-  this._map.invalidateSize();
-});
-}
+    // ✅ Satellite layer (untuk Kriteria Advanced)
+    const satellite = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Tiles © Esri',
+      }
+    );
+
+    osm.addTo(this._map);
+
+    // ✅ Layer control
+    L.control.layers({
+      Default: osm,
+      Satellite: satellite,
+    }).addTo(this._map);
+
+    // 🔥 Penting: sync saat map ready
+    this._map.whenReady(() => {
+      this._map.invalidateSize();
+    });
+  }
 
   _addMarkers(stories) {
     this._markers = [];
 
     stories.forEach((story) => {
-      if (story.lat && story.lon) {
+      if (story.lat != null && story.lon != null) {
         const marker = L.marker([story.lat, story.lon])
           .addTo(this._map)
           .bindPopup(`
@@ -95,13 +114,10 @@ export default class HomePresenter {
       }
     });
 
-    if (this._markers.length > 0) {
-  const first = this._markers[0].getLatLng();
+    // ❌ HAPUS semua fitBounds & setView ulang di sini
+    // (ini sumber utama marker "geser")
 
-  // 🔥 pakai setView (STABIL)
-  this._map.setView([first.lat, first.lng], 10);
-}
-
+    // interaksi reset
     this._map.on('click', () => {
       this._resetMarkerOpacity();
     });
