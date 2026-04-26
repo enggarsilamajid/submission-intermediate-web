@@ -2,16 +2,16 @@ import HomePresenter from '../../presenters/home-presenter';
 
 export default class HomePage {
   async render() {
-    return `
-      <section>
-        <h1>Home</h1>
+  return `
+    <section>
+      <h1>Home</h1>
 
-        <div id="map" style="height: 300px;"></div>
+      <div id="map" style="height: 300px;"></div>
 
-        <div id="stories"></div>
-      </section>
-    `;
-  }
+      <div id="stories"></div>
+    </section>
+  `;
+}
 
   async afterRender() {
     const presenter = new HomePresenter({
