@@ -1,23 +1,13 @@
 import API from '../data/api';
-
 import L from 'leaflet';
 
+// ✅ FIX ICON (pakai CDN saja, HAPUS import markerIcon lokal)
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
-
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
 
 export default class HomePresenter {
   constructor({ view }) {
@@ -31,6 +21,7 @@ export default class HomePresenter {
       const response = await API.getStories();
       let stories = response.listStory;
 
+      // fallback dummy
       if (!stories || stories.length === 0) {
         stories = [
           {
@@ -47,69 +38,88 @@ export default class HomePresenter {
       this._initMap();
       this._addMarkers(stories);
 
+      // 🔥 FIX: cegah map “geser” karena resize/transition
+      setTimeout(() => {
+        this._map.invalidateSize();
+      }, 350);
+
     } catch (error) {
       this._view.renderError(error.message);
     }
   }
 
   _initMap() {
-  this._map = L.map('map').setView([-2.5, 118], 5);
+    this._map = L.map('map', {
+      zoomControl: true,
+      scrollWheelZoom: true,
+    }).setView([-2.5, 118], 5);
 
-  // ✅ layer 1
-  const osm = L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-      attribution: '&copy; OpenStreetMap contributors',
-    }
-  );
+    // ✅ DEFAULT
+    const osm = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        attribution: '&copy; OpenStreetMap contributors',
+      }
+    );
 
-  // ✅ layer 2 (aman, tidak kena block)
-  const osmBW = L.tileLayer(
-    'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
-    {
-      attribution: '&copy; OpenStreetMap contributors',
-    }
-  );
+    // ✅ SATELLITE (AMAN TANPA API KEY)
+    const satellite = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Tiles &copy; Esri',
+      }
+    );
 
-  // ✅ tambahkan layer default ke map
-  osm.addTo(this._map);
+    osm.addTo(this._map);
 
-  // ✅ BARU definisikan baseMaps
-  const baseMaps = {
-    "Normal": osm,
-    "Black & White": osmBW,
-  };
+    const baseMaps = {
+      "Default": osm,
+      "Satellite": satellite,
+    };
 
-  // ✅ BARU panggil control
-  L.control.layers(baseMaps).addTo(this._map);
-}
+    L.control.layers(baseMaps).addTo(this._map);
+  }
 
   _addMarkers(stories) {
-  console.log('MARKER DATA:', stories);
+    this._markers = [];
 
-  stories.forEach((story) => {
-    console.log(story.lat, story.lon);
+    stories.forEach((story) => {
+      if (story.lat && story.lon) {
+        const marker = L.marker([story.lat, story.lon])
+          .addTo(this._map)
+          .bindPopup(`
+            <b>${story.name}</b><br/>
+            ${story.description}
+          `);
 
-    if (story.lat && story.lon) {
-      const marker = L.marker([story.lat, story.lon])
-        .addTo(this._map)
-        .bindPopup(`
-          <b>${story.name}</b><br/>
-          ${story.description}
-        `);
+        // ✅ klik marker → highlight
+        marker.on('click', () => {
+          this._resetMarkerOpacity();
+          marker.setOpacity(0.5);
+        });
 
-      marker.on('click', () => {
-        this._markers.forEach(m => m.setOpacity(1));
-        marker.setOpacity(0.5);
-      });
+        this._markers.push(marker);
+      }
+    });
 
-      this._markers.push(marker);
+    // ✅ FIT KE SEMUA MARKER
+    if (this._markers.length > 0) {
+      const group = L.featureGroup(this._markers);
+      this._map.fitBounds(group.getBounds(), { padding: [50, 50] });
     }
-  });
 
-  if (this._markers.length > 0) {
-  const group = L.featureGroup(this._markers);
-  this._map.fitBounds(group.getBounds());
-}
-}
+    // ✅ klik peta → reset marker
+    this._map.on('click', () => {
+      this._resetMarkerOpacity();
+    });
+
+    // ✅ tutup popup → reset marker
+    this._map.on('popupclose', () => {
+      this._resetMarkerOpacity();
+    });
+  }
+
+  _resetMarkerOpacity() {
+    this._markers.forEach((m) => m.setOpacity(1));
+  }
 }
