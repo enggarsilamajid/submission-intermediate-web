@@ -48,9 +48,11 @@ export default class HomePresenter {
     this._map = L.map('map').setView([-2.5, 118], 5);
 
     const defaultLayer = L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      { attribution: '© OpenStreetMap' }
-    );
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; OpenStreetMap contributors',
+  }
+);
 
     const satelliteLayer = L.tileLayer(
       'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
