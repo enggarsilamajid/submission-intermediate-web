@@ -22,16 +22,21 @@ export default class HomePage {
   }
 
   renderStories(stories) {
-    const container = document.querySelector('#stories');
+  const container = document.querySelector('#stories');
 
-    container.innerHTML = stories.map((story) => `
-      <div>
-        <img src="${story.photoUrl}" alt="${story.name}" />
-        <h3>${story.name}</h3>
-        <p>${story.description}</p>
-      </div>
-    `).join('');
+  if (!stories || stories.length === 0) {
+    container.innerHTML = `<p>Tidak ada data</p>`;
+    return;
   }
+
+  container.innerHTML = stories.map((story) => `
+    <div>
+      <img src="${story.photoUrl}" alt="${story.name}" />
+      <h3>${story.name}</h3>
+      <p>${story.description}</p>
+    </div>
+  `).join('');
+}
 
   renderError(message) {
     document.querySelector('#stories').innerHTML = `
