@@ -1,6 +1,5 @@
 import routes from '../routes/routes';
 import { getActiveRoute } from '../routes/url-parser';
-import { pageTransition } from '../utils/transition';
 
 class App {
   #content = null;
@@ -37,29 +36,28 @@ class App {
   }
 
   async renderPage() {
-  const url = getActiveRoute();
-  const page = routes[url];
+    const url = getActiveRoute();
+    const page = routes[url];
 
-  // mulai fade out
-  this.#content.classList.remove('fade-in');
-  this.#content.classList.add('fade-out');
+    // 1. Fade out halaman lama
+    this.#content.classList.remove('fade-in');
+    this.#content.classList.add('fade-out');
 
-  // tunggu animasi selesai
-  await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-  this.#content.innerHTML = await page.render();
+    // 2. Render halaman baru
+    this.#content.innerHTML = await page.render();
 
-  // 🔥 tunggu browser benar-benar render layout
-  await new Promise((resolve) => requestAnimationFrame(resolve));
+    // 3. 🔥 Fade-in DULU (biar layout stabil sebelum JS jalan)
+    this.#content.classList.remove('fade-out');
+    this.#content.classList.add('fade-in');
 
-  await page.afterRender();
+    // 4. Tunggu browser benar-benar render layout
+    await new Promise((resolve) => requestAnimationFrame(resolve));
 
-  // 🔥 tunggu map selesai init, baru fade in
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  this.#content.classList.remove('fade-out');
-  this.#content.classList.add('fade-in');
-}
+    // 5. 🔥 Baru jalankan logic halaman (Leaflet dibuat di sini)
+    await page.afterRender();
+  }
 }
 
 export default App;
