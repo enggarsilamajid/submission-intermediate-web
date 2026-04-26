@@ -40,10 +40,25 @@ class App {
   const url = getActiveRoute();
   const page = routes[url];
 
-  await pageTransition(this.#content, async () => {
-    this.#content.innerHTML = await page.render();
-    await page.afterRender();
-  });
+  // mulai fade out
+  this.#content.classList.remove('fade-in');
+  this.#content.classList.add('fade-out');
+
+  // tunggu animasi selesai
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  this.#content.innerHTML = await page.render();
+
+  // 🔥 tunggu browser benar-benar render layout
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  await page.afterRender();
+
+  // 🔥 tunggu map selesai init, baru fade in
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  this.#content.classList.remove('fade-out');
+  this.#content.classList.add('fade-in');
 }
 }
 

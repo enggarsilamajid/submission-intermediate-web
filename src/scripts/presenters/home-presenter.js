@@ -68,6 +68,10 @@ export default class HomePresenter {
   setTimeout(() => {
     this._map.invalidateSize();
   }, 200);
+
+  this._map.whenReady(() => {
+  this._map.invalidateSize();
+});
 }
 
   _addMarkers(stories) {
