@@ -55,12 +55,18 @@ export default class HomePresenter {
   _initMap() {
     this._map = L.map('map').setView([-2.5, 118], 5);
 
-    const defaultLayer = L.tileLayer(
+    const osm = L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; OpenStreetMap contributors',
-  }
+  { attribution: '&copy; OpenStreetMap' }
 );
+
+const osmBW = L.tileLayer(
+  'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+  { attribution: '&copy; OpenStreetMap' }
+);
+
+osm.addTo(this._map);
+L.control.layers(baseMaps).addTo(this._map);
 
     const satelliteLayer = L.tileLayer(
       'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
