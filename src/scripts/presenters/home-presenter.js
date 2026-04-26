@@ -9,9 +9,17 @@ export default class HomePresenter {
   try {
     const response = await API.getStories();
 
-    console.log('RESPONSE:', response); // debug
+    let stories = response.listStory;
 
-    const stories = response.listStory || [];
+    if (!stories || stories.length === 0) {
+      stories = [
+        {
+          name: 'Dummy User',
+          description: 'Ini data dummy untuk testing',
+          photoUrl: 'https://via.placeholder.com/150',
+        },
+      ];
+    }
 
     this._view.renderStories(stories);
   } catch (error) {
