@@ -9,6 +9,20 @@ body {
   font-family: 'Arial', sans-serif;
 }
 
+#main-content {
+  transition: all 0.3s ease;
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .container {
   padding-inline: 32px;
   margin-inline: auto;
