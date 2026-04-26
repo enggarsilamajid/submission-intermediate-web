@@ -76,11 +76,13 @@ export default class HomePresenter {
             <b>${story.name}</b><br/>
             ${story.description}
           `);
-
         marker.on('click', () => {
-          marker.setOpacity(0.5);
+          this._markers.forEach(m => m.setOpacity(1)); // reset semua
+          marker.setOpacity(0.5); // highlight
         });
-
+marker.on('mouseover', () => {
+  marker.openPopup();
+});
         this._markers.push(marker);
       }
     });
