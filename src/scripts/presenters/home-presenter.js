@@ -40,8 +40,9 @@ export default class HomePresenter {
 
       // 🔥 FIX: cegah map “geser” karena resize/transition
       setTimeout(() => {
-        this._map.invalidateSize();
-      }, 350);
+  this._map.invalidateSize();
+  this._map.setView(this._map.getCenter()); // 🔥 paksa re-render posisi
+}, 500);
 
     } catch (error) {
       this._view.renderError(error.message);
@@ -78,6 +79,12 @@ export default class HomePresenter {
     };
 
     L.control.layers(baseMaps).addTo(this._map);
+
+    window.addEventListener('resize', () => {
+  if (this._map) {
+    this._map.invalidateSize();
+  }
+});
   }
 
   _addMarkers(stories) {
