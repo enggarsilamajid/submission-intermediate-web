@@ -99,5 +99,10 @@ export default class HomePresenter {
       this._markers.push(marker);
     }
   });
+
+  if (this._markers.length > 0) {
+  const group = L.featureGroup(this._markers);
+  this._map.fitBounds(group.getBounds());
+}
 }
 }
