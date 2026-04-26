@@ -1,7 +1,7 @@
 import API from '../data/api';
 import L from 'leaflet';
 
-// ✅ FIX ICON (CDN)
+// ✅ FIX ICON
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -32,16 +32,14 @@ export default class HomePresenter {
 
       this._view.renderStories(stories);
 
-      // 🔥 TUNGGU DOM BENAR-BENAR SIAP (bukan setTimeout tebak-tebakan)
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      // 🔥 tunggu DOM stabil
+      await new Promise((r) => requestAnimationFrame(r));
 
       this._initMap();
       this._addMarkers(stories);
 
-      // 🔥 FINAL SYNC (sekali, setelah semua siap)
-      setTimeout(() => {
-        this._map.invalidateSize();
-      }, 100);
+      // 🔥 FINAL FIX (WAJIB)
+      this._fixMap();
 
     } catch (error) {
       this._view.renderError(error.message);
@@ -51,46 +49,39 @@ export default class HomePresenter {
   _initMap() {
     const el = document.getElementById('map');
 
-    // safety: pastikan elemen ada & punya tinggi
     if (!el) throw new Error('Element #map tidak ditemukan');
-    if (el.offsetHeight === 0) {
-      console.warn('Map height 0 → cek CSS #map height');
-    }
 
-    // ❌ JANGAN setView berkali-kali, cukup sekali di sini
     this._map = L.map(el, {
       zoomControl: true,
       scrollWheelZoom: true,
     }).setView([-6.2, 106.8], 10);
 
-    // ✅ Default layer
+    // default layer
     const osm = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors',
-      }
+      { attribution: '&copy; OpenStreetMap contributors' }
     );
 
-    // ✅ Satellite layer (untuk Kriteria Advanced)
+    // satellite layer
     const satellite = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: 'Tiles © Esri',
-      }
+      { attribution: 'Tiles © Esri' }
     );
 
     osm.addTo(this._map);
 
-    // ✅ Layer control
+    // layer control
     L.control.layers({
       Default: osm,
       Satellite: satellite,
     }).addTo(this._map);
 
-    // 🔥 Penting: sync saat map ready
-    this._map.whenReady(() => {
-      this._map.invalidateSize();
+    // 🔥 AUTO FIX kalau ukuran berubah
+    const observer = new ResizeObserver(() => {
+      this._fixMap();
     });
+
+    observer.observe(el);
   }
 
   _addMarkers(stories) {
@@ -114,10 +105,7 @@ export default class HomePresenter {
       }
     });
 
-    // ❌ HAPUS semua fitBounds & setView ulang di sini
-    // (ini sumber utama marker "geser")
-
-    // interaksi reset
+    // reset marker
     this._map.on('click', () => {
       this._resetMarkerOpacity();
     });
@@ -125,6 +113,18 @@ export default class HomePresenter {
     this._map.on('popupclose', () => {
       this._resetMarkerOpacity();
     });
+  }
+
+  // 🔥 CORE FIX (INI YANG NGILANGIN BUG GESER)
+  _fixMap() {
+    if (!this._map) return;
+
+    const center = this._map.getCenter();
+    const zoom = this._map.getZoom();
+
+    this._map.invalidateSize();
+
+    this._map.setView(center, zoom, { animate: false });
   }
 
   _resetMarkerOpacity() {

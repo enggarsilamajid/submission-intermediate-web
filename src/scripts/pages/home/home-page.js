@@ -5,24 +5,16 @@ export default class HomePage {
     return `
       <section>
         <h1>Home</h1>
-
-        <!-- 🔥 penting: pakai class + height fix -->
-        <div id="map" class="map-container"></div>
-
+        <div id="map"></div>
         <div id="stories"></div>
       </section>
     `;
   }
 
   async afterRender() {
-  // tunggu 1 frame + DOM benar-benar terpasang
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      const presenter = new HomePresenter({ view: this });
-      presenter.init();
-    }, 0);
-  });
-}
+    const presenter = new HomePresenter({ view: this });
+    await presenter.init();
+  }
 
   renderStories(stories) {
     const container = document.querySelector('#stories');
@@ -42,8 +34,6 @@ export default class HomePage {
   }
 
   renderError(message) {
-    document.querySelector('#stories').innerHTML = `
-      <p>Error: ${message}</p>
-    `;
+    document.querySelector('#stories').innerHTML = `<p>Error: ${message}</p>`;
   }
 }

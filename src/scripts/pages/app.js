@@ -2,9 +2,9 @@ import routes from '../routes/routes';
 import { getActiveRoute } from '../routes/url-parser';
 
 class App {
-  #content = null;
-  #drawerButton = null;
-  #navigationDrawer = null;
+  #content;
+  #drawerButton;
+  #navigationDrawer;
 
   constructor({ navigationDrawer, drawerButton, content }) {
     this.#content = content;
@@ -26,12 +26,6 @@ class App {
       ) {
         this.#navigationDrawer.classList.remove('open');
       }
-
-      this.#navigationDrawer.querySelectorAll('a').forEach((link) => {
-        if (link.contains(event.target)) {
-          this.#navigationDrawer.classList.remove('open');
-        }
-      });
     });
   }
 
@@ -39,23 +33,21 @@ class App {
     const url = getActiveRoute();
     const page = routes[url];
 
-    // 1. Fade out halaman lama
+    // fade out
     this.#content.classList.remove('fade-in');
     this.#content.classList.add('fade-out');
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((r) => setTimeout(r, 300));
 
-    // 2. Render halaman baru
     this.#content.innerHTML = await page.render();
 
-    // 3. 🔥 Fade-in DULU (biar layout stabil sebelum JS jalan)
+    // fade in dulu (biar layout stabil)
     this.#content.classList.remove('fade-out');
     this.#content.classList.add('fade-in');
 
-    // 4. Tunggu browser benar-benar render layout
-    await new Promise((resolve) => requestAnimationFrame(resolve));
+    // tunggu layout
+    await new Promise((r) => requestAnimationFrame(r));
 
-    // 5. 🔥 Baru jalankan logic halaman (Leaflet dibuat di sini)
     await page.afterRender();
   }
 }
