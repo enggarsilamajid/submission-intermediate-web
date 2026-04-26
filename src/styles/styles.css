@@ -37,10 +37,6 @@ body {
   height: 100%;
 }
 
-#map, .leaflet-container {
-  transform: none !important;
-}
-
 .container {
   padding-inline: 32px;
   margin-inline: auto;
