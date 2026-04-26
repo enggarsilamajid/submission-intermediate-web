@@ -39,8 +39,9 @@ export default class HomePage {
 }
 
   renderError(message) {
-    document.querySelector('#stories').innerHTML = `
-      <p>Error: ${message}</p>
-    `;
-  }
+  document.querySelector('#stories').innerHTML = `
+    <p>Error: ${message}</p>
+    <pre>${JSON.stringify(message)}</pre>
+  `;
+}
 }
