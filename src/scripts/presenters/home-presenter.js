@@ -1,6 +1,14 @@
 import API from '../data/api';
 
 import L from 'leaflet';
+
+const DefaultIcon = L.icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -70,23 +78,26 @@ export default class HomePresenter {
   }
 
   _addMarkers(stories) {
-    stories.forEach((story) => {
-      if (story.lat && story.lon) {
-        const marker = L.marker([story.lat, story.lon])
-          .addTo(this._map)
-          .bindPopup(`
-            <b>${story.name}</b><br/>
-            ${story.description}
-          `);
-        marker.on('click', () => {
-          this._markers.forEach(m => m.setOpacity(1)); // reset semua
-          marker.setOpacity(0.5); // highlight
-        });
-marker.on('mouseover', () => {
-  marker.openPopup();
-});
-        this._markers.push(marker);
-      }
-    });
-  }
+  console.log('MARKER DATA:', stories);
+
+  stories.forEach((story) => {
+    console.log(story.lat, story.lon);
+
+    if (story.lat && story.lon) {
+      const marker = L.marker([story.lat, story.lon])
+        .addTo(this._map)
+        .bindPopup(`
+          <b>${story.name}</b><br/>
+          ${story.description}
+        `);
+
+      marker.on('click', () => {
+        this._markers.forEach(m => m.setOpacity(1));
+        marker.setOpacity(0.5);
+      });
+
+      this._markers.push(marker);
+    }
+  });
+}
 }
