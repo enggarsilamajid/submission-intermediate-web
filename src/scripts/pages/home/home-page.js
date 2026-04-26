@@ -15,15 +15,14 @@ export default class HomePage {
   }
 
   async afterRender() {
-    // 🔥 tunggu DOM benar-benar siap
+  // tunggu 1 frame + DOM benar-benar terpasang
+  requestAnimationFrame(() => {
     setTimeout(() => {
-      const presenter = new HomePresenter({
-        view: this,
-      });
-
+      const presenter = new HomePresenter({ view: this });
       presenter.init();
-    }, 50);
-  }
+    }, 0);
+  });
+}
 
   renderStories(stories) {
     const container = document.querySelector('#stories');
