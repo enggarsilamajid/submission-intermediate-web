@@ -15,7 +15,8 @@ class App {
   }
 
   #setupDrawer() {
-    this.#drawerButton.addEventListener('click', () => {
+    this.#drawerButton.addEventListener('click', (event) => {
+      event.stopPropagation(); // 🔥 penting (biar tidak langsung ketutup)
       this.#navigationDrawer.classList.toggle('open');
     });
 
@@ -26,6 +27,16 @@ class App {
       ) {
         this.#navigationDrawer.classList.remove('open');
       }
+    });
+
+    this.#navigationDrawer.addEventListener('click', (event) => {
+      if (event.target.tagName === 'A') {
+        this.#navigationDrawer.classList.remove('open');
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      this.#navigationDrawer.classList.remove('open');
     });
   }
 
@@ -40,12 +51,12 @@ class App {
 
     this.#content.innerHTML = await page.render();
 
-    this.#content.classList.remove('fade-out');
-    this.#content.classList.add('fade-in');
-
     await new Promise((r) => requestAnimationFrame(r));
 
     await page.afterRender();
+
+    this.#content.classList.remove('fade-out');
+    this.#content.classList.add('fade-in');
   }
 }
 
