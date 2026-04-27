@@ -11,9 +11,11 @@ export default class AddPresenter {
     this._selectedLon = null;
 
     this._stream = null;
+    this._facingMode = 'environment';
+    this._capturedBlob = null;
   }
 
-  async init() {
+  init() {
     this._initMap();
     this._initCamera();
     this._initForm();
@@ -24,9 +26,7 @@ export default class AddPresenter {
 
     L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors',
-      }
+      { attribution: '&copy; OpenStreetMap contributors' }
     ).addTo(this._map);
 
     this._map.on('click', (e) => {
@@ -46,28 +46,49 @@ export default class AddPresenter {
   }
 
   _initCamera() {
-    document.querySelector('#open-camera').addEventListener('click', async () => {
-      try {
-        this._stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
-          audio: false,
-        });
+    const startBtn = document.querySelector('#btn-start-camera');
+    const captureBtn = document.querySelector('#btn-capture');
+    const switchBtn = document.querySelector('#btn-switch');
 
-        this._view.showCamera(this._stream);
-      } catch (error) {
-        alert('Tidak bisa akses kamera');
-      }
+    startBtn.addEventListener('click', async () => {
+      await this._startCamera();
+    });
+
+    switchBtn.addEventListener('click', async () => {
+      this._facingMode =
+        this._facingMode === 'environment' ? 'user' : 'environment';
+      await this._startCamera();
+    });
+
+    captureBtn.addEventListener('click', async () => {
+      this._capturedBlob = await this._takePhoto();
+      alert('Foto berhasil diambil');
+      this._stopCamera();
     });
   }
 
-  stopCamera() {
+  async _startCamera() {
+    try {
+      if (this._stream) this._stopCamera();
+
+      this._stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: this._facingMode },
+      });
+
+      this._view.showCamera(this._stream);
+    } catch (err) {
+      alert('Gagal akses kamera');
+    }
+  }
+
+  _stopCamera() {
     if (this._stream) {
-      this._stream.getTracks().forEach((track) => track.stop());
+      this._stream.getTracks().forEach((t) => t.stop());
       this._stream = null;
     }
   }
 
-  async takePhoto() {
+  async _takePhoto() {
     const video = document.querySelector('#camera-preview');
     const canvas = document.querySelector('#snapshot');
 
@@ -87,30 +108,26 @@ export default class AddPresenter {
       e.preventDefault();
 
       const description = document.querySelector('#description').value;
-      const fileInput = document.querySelector('#photo');
 
-      let photo = fileInput.files[0];
-
-      if (!photo && this._stream) {
-        photo = await this.takePhoto();
+      if (!this._capturedBlob) {
+        alert('Ambil foto dulu');
+        return;
       }
 
-      await this._submitData({ description, photo });
+      if (!this._selectedLat || !this._selectedLon) {
+        alert('Pilih lokasi di peta');
+        return;
+      }
+
+      await this._submitData({
+        description,
+        photo: this._capturedBlob,
+      });
     });
   }
 
   async _submitData({ description, photo }) {
     try {
-      if (!this._selectedLat || !this._selectedLon) {
-        alert('Pilih lokasi dulu di peta');
-        return;
-      }
-
-      if (!photo) {
-        alert('Upload atau ambil foto dulu');
-        return;
-      }
-
       const formData = new FormData();
       formData.append('description', description);
       formData.append('photo', photo);
@@ -119,14 +136,12 @@ export default class AddPresenter {
 
       await API.addStory(formData);
 
-      alert('Berhasil tambah data!');
-
-      this.stopCamera();
+      alert('Berhasil tambah data');
 
       window.location.hash = '/';
-    } catch (error) {
-      console.error(error);
-      alert('Gagal kirim data: ' + error.message);
+    } catch (err) {
+      console.error(err);
+      alert('Gagal kirim: ' + err.message);
     }
   }
 }

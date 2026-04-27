@@ -6,40 +6,28 @@ const ENDPOINTS = {
 
 const API = {
   async getStories() {
-    try {
-      const response = await fetch(ENDPOINTS.STORIES);
-      const responseJson = await response.json();
-
-      return responseJson;
-    } catch (error) {
-      console.error('GET ERROR:', error);
-      throw error;
-    }
+    const res = await fetch(ENDPOINTS.STORIES);
+    return res.json();
   },
 
   async addStory(formData) {
-    try {
-      const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-      const response = await fetch(ENDPOINTS.STORIES, {
-        method: 'POST',
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: formData,
-      });
+    const res = await fetch(ENDPOINTS.STORIES, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
-      const responseJson = await response.json();
+    const json = await res.json();
 
-      if (!response.ok) {
-        throw new Error(responseJson.message || 'Gagal kirim data');
-      }
-
-      return responseJson;
-    } catch (error) {
-      console.error('POST ERROR:', error);
-      throw error;
+    if (!res.ok) {
+      throw new Error(json.message);
     }
+
+    return json;
   },
 };
 

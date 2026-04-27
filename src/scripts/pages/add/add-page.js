@@ -7,24 +7,27 @@ export default class AddPage {
         <h1>Tambah Data</h1>
 
         <form id="story-form">
-          <label for="description">Deskripsi:</label><br/>
-          <input type="text" id="description" required /><br/><br/>
+          <label>Deskripsi</label><br/>
+          <input id="description" type="text" required /><br/><br/>
 
-          <label for="photo">Upload Gambar:</label><br/>
-          <input type="file" id="photo" accept="image/*" /><br/><br/>
-
-          <button type="button" id="open-camera">
-            Gunakan Kamera
-          </button><br/><br/>
-
-          <video id="camera-preview" autoplay style="display:none; width:100%; max-width:300px;"></video>
+          <!-- CAMERA -->
+          <video id="camera-preview" autoplay playsinline style="width:100%; max-width:300px; display:none;"></video>
           <canvas id="snapshot" style="display:none;"></canvas>
+
+          <div style="margin:10px 0;">
+            <button type="button" id="btn-start-camera">Buka Kamera</button>
+            <button type="button" id="btn-capture">Ambil Gambar</button>
+            <button type="button" id="btn-switch">Ganti Kamera</button>
+          </div>
+
+          <br/>
 
           <p>Klik peta untuk memilih lokasi</p>
           <div id="map" style="height:300px;"></div>
 
           <p id="latlon"></p>
 
+          <br/>
           <button type="submit">Kirim</button>
         </form>
       </section>
@@ -32,10 +35,7 @@ export default class AddPage {
   }
 
   async afterRender() {
-    this._presenter = new AddPresenter({
-      view: this,
-    });
-
+    this._presenter = new AddPresenter({ view: this });
     this._presenter.init();
   }
 
