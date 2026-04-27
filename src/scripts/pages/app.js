@@ -33,7 +33,6 @@ class App {
     const url = getActiveRoute();
     const page = routes[url];
 
-    // fade out
     this.#content.classList.remove('fade-in');
     this.#content.classList.add('fade-out');
 
@@ -41,11 +40,9 @@ class App {
 
     this.#content.innerHTML = await page.render();
 
-    // fade in dulu (biar layout stabil)
     this.#content.classList.remove('fade-out');
     this.#content.classList.add('fade-in');
 
-    // tunggu layout
     await new Promise((r) => requestAnimationFrame(r));
 
     await page.afterRender();

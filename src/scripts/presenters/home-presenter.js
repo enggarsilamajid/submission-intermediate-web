@@ -1,7 +1,6 @@
 import API from '../data/api';
 import L from 'leaflet';
 
-// ✅ FIX ICON
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -32,13 +31,11 @@ export default class HomePresenter {
 
       this._view.renderStories(stories);
 
-      // 🔥 tunggu DOM stabil
       await new Promise((r) => requestAnimationFrame(r));
 
       this._initMap();
       this._addMarkers(stories);
 
-      // 🔥 FINAL FIX (WAJIB)
       this._fixMap();
 
     } catch (error) {
@@ -56,13 +53,11 @@ export default class HomePresenter {
       scrollWheelZoom: true,
     }).setView([-6.2, 106.8], 10);
 
-    // default layer
     const osm = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       { attribution: '&copy; OpenStreetMap contributors' }
     );
 
-    // satellite layer
     const satellite = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       { attribution: 'Tiles © Esri' }
@@ -70,13 +65,11 @@ export default class HomePresenter {
 
     osm.addTo(this._map);
 
-    // layer control
     L.control.layers({
       Default: osm,
       Satellite: satellite,
     }).addTo(this._map);
 
-    // 🔥 AUTO FIX kalau ukuran berubah
     const observer = new ResizeObserver(() => {
       this._fixMap();
     });
@@ -105,7 +98,6 @@ export default class HomePresenter {
       }
     });
 
-    // reset marker
     this._map.on('click', () => {
       this._resetMarkerOpacity();
     });
@@ -115,7 +107,6 @@ export default class HomePresenter {
     });
   }
 
-  // 🔥 CORE FIX (INI YANG NGILANGIN BUG GESER)
   _fixMap() {
     if (!this._map) return;
 
