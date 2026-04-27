@@ -46,39 +46,42 @@ export default class AddPresenter {
   }
 
   _initCamera() {
-    const startBtn = document.querySelector('#btn-start-camera');
-    const captureBtn = document.querySelector('#btn-capture');
-    const switchBtn = document.querySelector('#btn-switch');
-
-    startBtn.addEventListener('click', async () => {
+    document.querySelector('#btn-start-camera').addEventListener('click', async () => {
       await this._startCamera();
     });
 
-    switchBtn.addEventListener('click', async () => {
+    document.querySelector('#btn-switch').addEventListener('click', async () => {
       this._facingMode =
         this._facingMode === 'environment' ? 'user' : 'environment';
+
       await this._startCamera();
     });
 
-    captureBtn.addEventListener('click', async () => {
-      this._capturedBlob = await this._takePhoto();
-      alert('Foto berhasil diambil');
+    document.querySelector('#btn-capture').addEventListener('click', async () => {
+      const blob = await this._takePhoto();
+      this._capturedBlob = blob;
+
+      const imageUrl = URL.createObjectURL(blob);
+
+      this._view.showPreview(imageUrl);
+
       this._stopCamera();
+    });
+
+    document.querySelector('#btn-retake').addEventListener('click', async () => {
+      this._capturedBlob = null;
+      await this._startCamera();
     });
   }
 
   async _startCamera() {
-    try {
-      if (this._stream) this._stopCamera();
+    if (this._stream) this._stopCamera();
 
-      this._stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: this._facingMode },
-      });
+    this._stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: this._facingMode },
+    });
 
-      this._view.showCamera(this._stream);
-    } catch (err) {
-      alert('Gagal akses kamera');
-    }
+    this._view.showCamera(this._stream);
   }
 
   _stopCamera() {
@@ -86,6 +89,8 @@ export default class AddPresenter {
       this._stream.getTracks().forEach((t) => t.stop());
       this._stream = null;
     }
+
+    this._view.hideCamera();
   }
 
   async _takePhoto() {
@@ -108,9 +113,12 @@ export default class AddPresenter {
       e.preventDefault();
 
       const description = document.querySelector('#description').value;
+      const fileInput = document.querySelector('#photo-file');
 
-      if (!this._capturedBlob) {
-        alert('Ambil foto dulu');
+      let photo = fileInput.files[0] || this._capturedBlob;
+
+      if (!photo) {
+        alert('Upload atau ambil gambar dulu');
         return;
       }
 
@@ -121,7 +129,7 @@ export default class AddPresenter {
 
       await this._submitData({
         description,
-        photo: this._capturedBlob,
+        photo,
       });
     });
   }
@@ -137,10 +145,8 @@ export default class AddPresenter {
       await API.addStory(formData);
 
       alert('Berhasil tambah data');
-
       window.location.hash = '/';
     } catch (err) {
-      console.error(err);
       alert('Gagal kirim: ' + err.message);
     }
   }

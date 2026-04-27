@@ -7,24 +7,38 @@ export default class AddPage {
         <h1>Tambah Data</h1>
 
         <form id="story-form">
+          <!-- DESKRIPSI -->
           <label>Deskripsi</label><br/>
           <input id="description" type="text" required /><br/><br/>
 
-          <!-- CAMERA -->
-          <video id="camera-preview" autoplay playsinline style="width:100%; max-width:300px; display:none;"></video>
-          <canvas id="snapshot" style="display:none;"></canvas>
+          <!-- UPLOAD FILE -->
+          <label>Upload Gambar</label><br/>
+          <input type="file" id="photo-file" accept="image/*" /><br/><br/>
 
-          <div style="margin:10px 0;">
-            <button type="button" id="btn-start-camera">Buka Kamera</button>
-            <button type="button" id="btn-capture">Ambil Gambar</button>
-            <button type="button" id="btn-switch">Ganti Kamera</button>
+          <!-- CAMERA -->
+          <button type="button" id="btn-start-camera">Buka Kamera</button>
+
+          <div id="camera-section" style="display:none;">
+            <video id="camera-preview" autoplay playsinline style="width:100%; max-width:300px;"></video>
+
+            <div>
+              <button type="button" id="btn-capture">Ambil Gambar</button>
+              <button type="button" id="btn-switch">Ganti Kamera</button>
+            </div>
           </div>
 
-          <br/>
+          <!-- PREVIEW -->
+          <div id="preview-section" style="display:none;">
+            <img id="preview-image" style="width:100%; max-width:300px;" />
+            <br/>
+            <button type="button" id="btn-retake">Ambil Ulang</button>
+          </div>
 
+          <canvas id="snapshot" style="display:none;"></canvas>
+
+          <!-- MAP -->
           <p>Klik peta untuk memilih lokasi</p>
           <div id="map" style="height:300px;"></div>
-
           <p id="latlon"></p>
 
           <br/>
@@ -47,6 +61,20 @@ export default class AddPage {
   showCamera(stream) {
     const video = document.querySelector('#camera-preview');
     video.srcObject = stream;
-    video.style.display = 'block';
+
+    document.querySelector('#camera-section').style.display = 'block';
+    document.querySelector('#preview-section').style.display = 'none';
+  }
+
+  showPreview(imageUrl) {
+    const img = document.querySelector('#preview-image');
+    img.src = imageUrl;
+
+    document.querySelector('#camera-section').style.display = 'none';
+    document.querySelector('#preview-section').style.display = 'block';
+  }
+
+  hideCamera() {
+    document.querySelector('#camera-section').style.display = 'none';
   }
 }
