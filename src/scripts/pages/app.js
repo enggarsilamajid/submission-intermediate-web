@@ -17,7 +17,10 @@ class App {
   #setupDrawer() {
     this.#drawerButton.addEventListener('click', (event) => {
       event.stopPropagation();
-      this.#navigationDrawer.classList.toggle('open');
+
+      const isOpen = this.#navigationDrawer.classList.toggle('open');
+
+      this.#drawerButton.setAttribute('aria-expanded', isOpen);
     });
 
     document.body.addEventListener('click', (event) => {
@@ -26,17 +29,20 @@ class App {
         !this.#drawerButton.contains(event.target)
       ) {
         this.#navigationDrawer.classList.remove('open');
+        this.#drawerButton.setAttribute('aria-expanded', false);
       }
     });
 
-    this.#navigationDrawer.addEventListener('click', (event) => {
-      if (event.target.tagName === 'A') {
+    this.#navigationDrawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
         this.#navigationDrawer.classList.remove('open');
-      }
+        this.#drawerButton.setAttribute('aria-expanded', false);
+      });
     });
 
     window.addEventListener('hashchange', () => {
       this.#navigationDrawer.classList.remove('open');
+      this.#drawerButton.setAttribute('aria-expanded', false);
     });
   }
 
@@ -54,6 +60,9 @@ class App {
     await new Promise((r) => requestAnimationFrame(r));
 
     await page.afterRender();
+
+    this.#content.setAttribute('tabindex', '-1');
+    this.#content.focus();
 
     this.#content.classList.remove('fade-out');
     this.#content.classList.add('fade-in');

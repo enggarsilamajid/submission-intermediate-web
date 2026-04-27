@@ -1,7 +1,6 @@
 * {
   margin: 0;
   padding: 0;
-
   box-sizing: border-box;
 }
 
@@ -9,6 +8,7 @@ body {
   font-family: 'Arial', sans-serif;
 }
 
+/* ===== TRANSITION SPA ===== */
 #main-content {
   transition: opacity 0.3s ease;
 }
@@ -21,13 +21,37 @@ body {
   opacity: 1;
 }
 
+/* ===== SKIP LINK ===== */
+.skip-link {
+  position: absolute;
+  top: -50px;
+  left: 10px;
+  background: black;
+  color: white;
+  padding: 8px;
+  z-index: 10000;
+}
+
+.skip-link:focus {
+  top: 10px;
+}
+
+/* ===== FOCUS ACCESSIBILITY ===== */
+a:focus,
+button:focus,
+input:focus {
+  outline: 2px solid blue;
+  outline-offset: 2px;
+}
+
+/* ===== MAP ===== */
 .map-container {
   width: 100%;
   height: 300px;
 }
 
 #map {
-  height: 300px;
+  height: 250px; /* mobile default */
   width: 100%;
   display: block;
 }
@@ -37,12 +61,42 @@ body {
   height: 100%;
 }
 
+/* ===== RESPONSIVE MAP ===== */
+@media (min-width: 768px) {
+  #map {
+    height: 300px;
+  }
+}
+
+@media (min-width: 1024px) {
+  #map {
+    height: 400px;
+  }
+}
+
+/* ===== IMAGE SAFE ===== */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===== FORM ===== */
+input,
+button {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 10px;
+}
+
+/* ===== CONTAINER ===== */
 .container {
   padding-inline: 32px;
   margin-inline: auto;
   max-width: 1300px;
 }
 
+/* ===== HEADER ===== */
 header {
   background-color: lightskyblue;
 }
@@ -64,6 +118,7 @@ header {
   color: #333;
 }
 
+/* ===== NAV DRAWER ===== */
 .navigation-drawer {
   min-height: 100vh;
   width: 200px;
@@ -100,6 +155,7 @@ header {
   cursor: pointer;
 }
 
+/* ===== NAV LIST ===== */
 .nav-list {
   list-style: none;
 
@@ -110,9 +166,8 @@ header {
 
 .nav-list li a {
   padding: 6px 10px;
-
   display: block;
-  
+
   color: #333;
   text-decoration: none;
 }
@@ -121,12 +176,17 @@ header {
   text-decoration: underline;
 }
 
-/* MAIN */
+/* ===== MAIN ===== */
 .main-content {
   padding-block: 20px;
 }
 
+/* ===== SECTION SPACING ===== */
+section {
+  padding: 16px;
+}
 
+/* ===== DESKTOP NAV ===== */
 @media screen and (width > 1000px) {
   .navigation-drawer {
     min-height: auto;
