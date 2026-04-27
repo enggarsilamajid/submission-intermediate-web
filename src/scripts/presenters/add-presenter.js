@@ -19,6 +19,12 @@ export default class AddPresenter {
     this._initMap();
     this._initCamera();
     this._initForm();
+
+    if (!localStorage.getItem('token')) {
+      alert('Harus login dulu');
+      window.location.hash = '/login';
+      return;
+    }
   }
 
   _initMap() {
