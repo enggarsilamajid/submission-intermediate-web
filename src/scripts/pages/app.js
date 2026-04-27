@@ -16,7 +16,7 @@ class App {
 
   #setupDrawer() {
     this.#drawerButton.addEventListener('click', (event) => {
-      event.stopPropagation(); // 🔥 penting (biar tidak langsung ketutup)
+      event.stopPropagation();
       this.#navigationDrawer.classList.toggle('open');
     });
 

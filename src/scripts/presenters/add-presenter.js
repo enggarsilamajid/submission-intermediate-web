@@ -4,16 +4,19 @@ import L from 'leaflet';
 export default class AddPresenter {
   constructor({ view }) {
     this._view = view;
+
     this._map = null;
-    this._lat = null;
-    this._lon = null;
+    this._selectedMarker = null;
+    this._selectedLat = null;
+    this._selectedLon = null;
+
     this._stream = null;
   }
 
   async init() {
     this._initMap();
-    this._initForm();
     this._initCamera();
+    this._initForm();
   }
 
   _initMap() {
@@ -21,76 +24,109 @@ export default class AddPresenter {
 
     L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      { attribution: '&copy; OpenStreetMap' }
+      {
+        attribution: '&copy; OpenStreetMap contributors',
+      }
     ).addTo(this._map);
 
     this._map.on('click', (e) => {
-      this._lat = e.latlng.lat;
-      this._lon = e.latlng.lng;
+      const { lat, lng } = e.latlng;
 
-      this._view.updateLatLon(this._lat, this._lon);
+      this._selectedLat = lat;
+      this._selectedLon = lng;
 
-      L.marker([this._lat, this._lon]).addTo(this._map);
-    });
-  }
-
-  _initForm() {
-    const form = document.getElementById('story-form');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const description = document.getElementById('description').value;
-      const fileInput = document.getElementById('photo');
-      const file = fileInput.files[0];
-
-      if (!description || !file || !this._lat || !this._lon) {
-        this._view.showMessage('Semua field wajib diisi!');
-        return;
+      if (this._selectedMarker) {
+        this._map.removeLayer(this._selectedMarker);
       }
 
-      try {
-        const formData = new FormData();
-        formData.append('description', description);
-        formData.append('photo', file);
-        formData.append('lat', this._lat);
-        formData.append('lon', this._lon);
+      this._selectedMarker = L.marker([lat, lng]).addTo(this._map);
 
-        await API.addStory(formData);
-
-        this._view.showMessage('Berhasil tambah data!');
-      } catch (err) {
-        this._view.showMessage('Gagal kirim data');
-      }
+      this._view.updateLatLon(lat, lng);
     });
   }
 
   _initCamera() {
-    const btn = document.getElementById('open-camera');
-    const video = document.getElementById('camera-preview');
-    const canvas = document.getElementById('snapshot');
-
-    btn.addEventListener('click', async () => {
-      this._stream = await navigator.mediaDevices.getUserMedia({ video: true });
-
-      video.srcObject = this._stream;
-      video.style.display = 'block';
-
-      setTimeout(() => {
-        canvas.getContext('2d').drawImage(video, 0, 0, 200, 150);
-
-        canvas.toBlob((blob) => {
-          const file = new File([blob], 'camera.jpg', { type: 'image/jpeg' });
-
-          const fileInput = document.getElementById('photo');
-          const dt = new DataTransfer();
-          dt.items.add(file);
-          fileInput.files = dt.files;
+    document.querySelector('#open-camera').addEventListener('click', async () => {
+      try {
+        this._stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false,
         });
 
-        this._stream.getTracks().forEach((t) => t.stop());
-        video.style.display = 'none';
-      }, 2000);
+        this._view.showCamera(this._stream);
+      } catch (error) {
+        alert('Tidak bisa akses kamera');
+      }
     });
+  }
+
+  stopCamera() {
+    if (this._stream) {
+      this._stream.getTracks().forEach((track) => track.stop());
+      this._stream = null;
+    }
+  }
+
+  async takePhoto() {
+    const video = document.querySelector('#camera-preview');
+    const canvas = document.querySelector('#snapshot');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg');
+    });
+  }
+
+  _initForm() {
+    document.querySelector('#story-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const description = document.querySelector('#description').value;
+      const fileInput = document.querySelector('#photo');
+
+      let photo = fileInput.files[0];
+
+      if (!photo && this._stream) {
+        photo = await this.takePhoto();
+      }
+
+      await this._submitData({ description, photo });
+    });
+  }
+
+  async _submitData({ description, photo }) {
+    try {
+      if (!this._selectedLat || !this._selectedLon) {
+        alert('Pilih lokasi dulu di peta');
+        return;
+      }
+
+      if (!photo) {
+        alert('Upload atau ambil foto dulu');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('description', description);
+      formData.append('photo', photo);
+      formData.append('lat', this._selectedLat);
+      formData.append('lon', this._selectedLon);
+
+      await API.addStory(formData);
+
+      alert('Berhasil tambah data!');
+
+      this.stopCamera();
+
+      window.location.hash = '/';
+    } catch (error) {
+      console.error(error);
+      alert('Gagal kirim data: ' + error.message);
+    }
   }
 }

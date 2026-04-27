@@ -4,28 +4,21 @@ export default class AddPage {
   async render() {
     return `
       <section>
-        <h1>Tambah Story</h1>
+        <h1>Tambah Data</h1>
 
         <form id="story-form">
-          <label>
-            Deskripsi:
-            <input type="text" id="description" required />
-          </label>
+          <label for="description">Deskripsi:</label><br/>
+          <input type="text" id="description" required /><br/><br/>
 
-          <br/><br/>
+          <label for="photo">Upload Gambar:</label><br/>
+          <input type="file" id="photo" accept="image/*" /><br/><br/>
 
-          <label>
-            Upload Gambar:
-            <input type="file" id="photo" accept="image/*" required />
-          </label>
+          <button type="button" id="open-camera">
+            Gunakan Kamera
+          </button><br/><br/>
 
-          <br/><br/>
-
-          <button type="button" id="open-camera">Gunakan Kamera</button>
-          <video id="camera-preview" autoplay style="display:none; width:200px;"></video>
+          <video id="camera-preview" autoplay style="display:none; width:100%; max-width:300px;"></video>
           <canvas id="snapshot" style="display:none;"></canvas>
-
-          <br/><br/>
 
           <p>Klik peta untuk memilih lokasi</p>
           <div id="map" style="height:300px;"></div>
@@ -34,23 +27,26 @@ export default class AddPage {
 
           <button type="submit">Kirim</button>
         </form>
-
-        <p id="message"></p>
       </section>
     `;
   }
 
   async afterRender() {
-    const presenter = new AddPresenter({ view: this });
-    presenter.init();
-  }
+    this._presenter = new AddPresenter({
+      view: this,
+    });
 
-  showMessage(msg) {
-    document.getElementById('message').innerText = msg;
+    this._presenter.init();
   }
 
   updateLatLon(lat, lon) {
-    document.getElementById('latlon').innerText =
+    document.querySelector('#latlon').innerText =
       `Lat: ${lat}, Lon: ${lon}`;
+  }
+
+  showCamera(stream) {
+    const video = document.querySelector('#camera-preview');
+    video.srcObject = stream;
+    video.style.display = 'block';
   }
 }
