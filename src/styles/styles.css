@@ -158,6 +158,8 @@ section {
   margin-top: 16px;
   border-radius: 12px;
   overflow: hidden;
+
+  position: relative;
 }
 
 #map {

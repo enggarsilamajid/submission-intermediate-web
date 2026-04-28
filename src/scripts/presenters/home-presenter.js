@@ -1,7 +1,7 @@
 import API from '../data/api';
 import L from 'leaflet';
 
-// ✅ FIX ICON (WAJIB untuk bundler)
+// FIX ICON
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -18,16 +18,22 @@ export default class HomePresenter {
   async init() {
     try {
       const response = await API.getStories();
-      console.log('GET STORIES:', response);
-
       const stories = response?.listStory || [];
 
       this._view.renderStories(stories);
 
-      // 🔥 tunggu DOM benar-benar siap
+      // 🔥 TUNGGU LAYOUT BENAR-BENAR STABIL
       requestAnimationFrame(() => {
-        this._initMap();
-        this._addMarkers(stories);
+        setTimeout(() => {
+          this._initMap();
+          this._addMarkers(stories);
+
+          // 🔥 INI KUNCI UTAMA FIX MARKER
+          setTimeout(() => {
+            this._map.invalidateSize();
+          }, 300);
+
+        }, 50);
       });
 
     } catch (error) {
@@ -40,7 +46,6 @@ export default class HomePresenter {
       zoomControl: true,
     }).setView([-2.5, 118], 5);
 
-    // ✅ DEFAULT
     const osm = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
@@ -48,7 +53,6 @@ export default class HomePresenter {
       }
     );
 
-    // ✅ SATELLITE
     const satellite = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       {
@@ -58,7 +62,6 @@ export default class HomePresenter {
 
     osm.addTo(this._map);
 
-    // ✅ DROPDOWN LAYER CONTROL
     L.control.layers(
       {
         Default: osm,
@@ -70,13 +73,6 @@ export default class HomePresenter {
         collapsed: true,
       }
     ).addTo(this._map);
-
-    // ✅ SATU-SATUNYA invalidateSize yang benar
-    this._map.whenReady(() => {
-      setTimeout(() => {
-        this._map.invalidateSize();
-      }, 200);
-    });
   }
 
   _addMarkers(stories) {
@@ -95,7 +91,6 @@ export default class HomePresenter {
       }
     });
 
-    // ✅ FIT KE SEMUA MARKER (AMAN)
     if (this._markers.length > 0) {
       const group = L.featureGroup(this._markers);
       this._map.fitBounds(group.getBounds(), {
