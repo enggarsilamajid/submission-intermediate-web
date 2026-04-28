@@ -5,7 +5,9 @@ const API = {
   async getStories() {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(`${CONFIG.BASE_URL}/stories`, {
+    const response = await fetch(
+      `${CONFIG.BASE_URL}/stories?location=1`,
+      {
       headers: {
         Authorization: `Bearer ${token}`,
       },
