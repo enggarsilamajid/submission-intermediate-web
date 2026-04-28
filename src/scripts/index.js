@@ -3,8 +3,6 @@ import 'leaflet/dist/leaflet.css';
 
 import App from './pages/app';
 
-alert('INDEX JS JALAN');
-
 document.addEventListener('DOMContentLoaded', async () => {
   const app = new App({
     content: document.querySelector('#main-content'),
