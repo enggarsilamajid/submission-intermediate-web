@@ -8,60 +8,39 @@ const ENDPOINTS = {
 
 const API = {
   async getStories() {
-    const res = await fetch(ENDPOINTS.STORIES);
-    return res.json();
-  },
-
-  async addStory(formData) {
     const token = localStorage.getItem('token');
 
-    const res = await fetch(ENDPOINTS.STORIES, {
-      method: 'POST',
+    const response = await fetch(ENDPOINTS.STORIES, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: formData,
     });
 
-    const json = await res.json();
-
-    if (!res.ok) {
-      throw new Error(json.message);
-    }
-
-    return json;
+    return await response.json();
   },
 
   async login({ email, password }) {
-    const res = await fetch(ENDPOINTS.LOGIN, {
+    const response = await fetch(ENDPOINTS.LOGIN, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ email, password }),
     });
 
-    const json = await res.json();
-
-    if (!res.ok) {
-      throw new Error(json.message);
-    }
-
-    return json.loginResult;
+    return await response.json();
   },
 
   async register({ name, email, password }) {
-    const res = await fetch(ENDPOINTS.REGISTER, {
+    const response = await fetch(ENDPOINTS.REGISTER, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ name, email, password }),
     });
-    
-    const json = await res.json();
 
-    if (!res.ok) {
-      throw new Error(json.message);
-    }
-
-    return json;
+    return await response.json();
   },
 };
 
