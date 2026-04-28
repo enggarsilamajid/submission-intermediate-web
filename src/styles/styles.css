@@ -14,12 +14,11 @@ body {
 
 /* ===== TRANSITION SPA ===== */
 #main-content {
-  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
 .fade-out {
   opacity: 0;
-  pointer-events: none;
 }
 
 .fade-in {
@@ -159,8 +158,6 @@ section {
   margin-top: 16px;
   border-radius: 12px;
   overflow: hidden;
-
-  position: relative;
 }
 
 #map {
