@@ -3,10 +3,16 @@ import HomePresenter from '../../presenters/home-presenter';
 export default class HomePage {
   async render() {
     return `
-      <section>
+      <section class="home-page">
         <h1>Home</h1>
-        <div id="map"></div>
-        <div id="stories"></div>
+
+        <!-- MAP WRAPPER (WAJIB untuk layout stabil) -->
+        <div class="map-wrapper">
+          <div id="map"></div>
+        </div>
+
+        <!-- STORIES -->
+        <div id="stories" class="stories-container"></div>
       </section>
     `;
   }
@@ -20,7 +26,9 @@ export default class HomePage {
     const container = document.querySelector('#stories');
 
     if (!stories || stories.length === 0) {
-      container.innerHTML = `<p>Tidak ada data</p>`;
+      container.innerHTML = `
+        <p style="margin-top:16px;">Tidak ada data</p>
+      `;
       return;
     }
 
@@ -28,7 +36,11 @@ export default class HomePage {
       <div class="story-list">
         ${stories.map((story) => `
           <article class="story-card">
-            <img src="${story.photoUrl}" alt="${story.name}" />
+            <img 
+              src="${story.photoUrl}" 
+              alt="Foto dari ${story.name}" 
+              loading="lazy"
+            />
 
             <div class="story-content">
               <h3>${story.name}</h3>
@@ -41,6 +53,10 @@ export default class HomePage {
   }
 
   renderError(message) {
-    document.querySelector('#stories').innerHTML = `<p>Error: ${message}</p>`;
+    document.querySelector('#stories').innerHTML = `
+      <p style="color:red; margin-top:16px;">
+        Error: ${message}
+      </p>
+    `;
   }
 }
