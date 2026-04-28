@@ -47,34 +47,36 @@ class App {
     });
   }
 
-  async renderPage() {
+ async renderPage() {
   const url = getActiveRoute();
   const page = routes[url];
 
-  const isMapPage = url === '/' || url === '/add'; // 🔥 halaman yang pakai Leaflet
+  // OUT ANIMATION
+  this.#content.classList.remove('fade-in');
+  this.#content.classList.add('fade-out');
 
-  // ❌ JANGAN animasi kalau ada map
-  if (!isMapPage) {
-    this.#content.classList.remove('fade-in');
-    this.#content.classList.add('fade-out');
+  await new Promise((r) => setTimeout(r, 200));
 
-    await new Promise((r) => setTimeout(r, 300));
-  }
-
+  // RENDER
   this.#content.innerHTML = await page.render();
 
   await new Promise((r) => requestAnimationFrame(r));
 
   await page.afterRender();
 
+  // RESET SCROLL (biar halus)
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+
+  // IN ANIMATION
+  this.#content.classList.remove('fade-out');
+  this.#content.classList.add('fade-in');
+
+  // accessibility focus
   this.#content.setAttribute('tabindex', '-1');
   this.#content.focus();
-
-  // ❌ JANGAN animasi kalau ada map
-  if (!isMapPage) {
-    this.#content.classList.remove('fade-out');
-    this.#content.classList.add('fade-in');
-  }
 }
 }
 
