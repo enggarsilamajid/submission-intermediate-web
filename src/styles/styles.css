@@ -12,22 +12,25 @@ body {
   color: #222;
 }
 
-/* ===== VARIABLE NAV HEIGHT ===== */
+/* ===== VARIABLE ===== */
 :root {
   --nav-height: 70px;
 }
 
 /* ===== TRANSITION SPA ===== */
 #main-content {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  will-change: opacity, transform;
 }
 
 .fade-out {
   opacity: 0;
+  transform: translateY(10px);
 }
 
 .fade-in {
   opacity: 1;
+  transform: translateY(0);
 }
 
 /* ===== SKIP LINK ===== */
@@ -45,21 +48,6 @@ body {
   top: 10px;
 }
 
-/* ===== PAGE TRANSITION ===== */
-#main-content {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.fade-out {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.fade-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* ===== ACCESSIBILITY ===== */
 a:focus,
 button:focus,
@@ -74,7 +62,7 @@ img {
   display: block;
 }
 
-/* ===== FORM ===== */
+/* ===== FORM GLOBAL ===== */
 input,
 button {
   width: 100%;
@@ -90,15 +78,13 @@ button {
   max-width: 1200px;
 }
 
-/* ===== HEADER (STICKY) ===== */
+/* ===== HEADER ===== */
 header {
   background-color: lightskyblue;
-
   position: sticky;
   top: 0;
   z-index: 9999;
   height: var(--nav-height);
-
   display: flex;
   align-items: center;
 }
@@ -106,13 +92,11 @@ header {
 .main-header {
   width: 100%;
   padding: 0 16px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* ===== BRAND ===== */
 .brand-name {
   font-size: 18px;
   font-weight: bold;
@@ -179,21 +163,20 @@ section {
   margin-top: 16px;
 }
 
-/* ===== FIX KHUSUS HOME (AGAR TIDAK KETUTUP NAVBAR) ===== */
+/* ===== FIX HOME ===== */
 .home-page {
   padding-top: var(--nav-height);
 }
 
 /* ========================= */
-/* ===== MAP (ISOLATED) ==== */
+/* ===== MAP ===== */
 /* ========================= */
 
 .map-wrapper {
   margin-top: 16px;
   border-radius: 12px;
   overflow: hidden;
-
-  position: relative; /* 🔥 penting untuk Leaflet */
+  position: relative;
 }
 
 #map {
@@ -203,55 +186,6 @@ section {
   z-index: 1;
 }
 
-/* ===== AUTH FORM (VERTICAL FIX) ===== */
-.auth-form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  min-height: calc(100vh - var(--nav-height));
-}
-
-/* container form */
-.auth-form form {
-  width: 100%;
-  max-width: 400px;
-
-  display: flex;
-  flex-direction: column; /* 🔥 ini kunci utama */
-  gap: 12px;
-
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* label */
-.auth-form label {
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-/* input */
-.auth-form input {
-  width: 100%;
-}
-
-/* button */
-.auth-form button {
-  width: 100%;
-  cursor: pointer;
-}
-
-/* status text */
-.auth-form #status {
-  text-align: center;
-  font-size: 14px;
-}
-
-/* responsive map */
 @media (min-width: 768px) {
   #map {
     height: 300px;
@@ -265,8 +199,49 @@ section {
 }
 
 /* ========================= */
-/* ===== STORY (SCOPED) ==== */
+/* ===== AUTH FORM FIX ===== */
 /* ========================= */
+
+.auth-form {
+  display: flex;
+  flex-direction: column; /* 🔥 FIX UTAMA */
+  align-items: center;
+  justify-content: center;
+
+  min-height: calc(100vh - var(--nav-height));
+  padding-top: var(--nav-height);
+}
+
+/* form container */
+.auth-form form {
+  width: 100%;
+  max-width: 400px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* spacing antar elemen */
+.auth-form h1 {
+  margin-bottom: 16px;
+}
+
+.auth-form p {
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ========================= */
+/* ===== STORY ===== */
+/* ========================= */
+
 .story-list {
   display: grid;
   grid-template-columns: 1fr;
@@ -292,7 +267,6 @@ section {
   overflow: hidden;
 
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-
   transition: transform 0.2s ease;
 }
 
@@ -321,7 +295,7 @@ section {
 }
 
 /* ========================= */
-/* ===== DESKTOP NAV ======= */
+/* ===== DESKTOP NAV ===== */
 /* ========================= */
 
 @media screen and (min-width: 1000px) {
@@ -344,7 +318,7 @@ section {
   }
 }
 
-/* ===== FIX LEAFLET SHIFT BUG ===== */
+/* ===== FIX LEAFLET BUG ===== */
 .leaflet-pane,
 .leaflet-map-pane,
 .leaflet-tile,
