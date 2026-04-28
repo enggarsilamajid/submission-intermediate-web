@@ -73,6 +73,10 @@ button {
 /* ===== HEADER ===== */
 header {
   background-color: lightskyblue;
+
+  position: sticky;
+  top: 0;
+  z-index: 9999;
 }
 
 .main-header {
