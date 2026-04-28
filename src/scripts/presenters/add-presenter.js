@@ -15,10 +15,10 @@ export default class AddPresenter {
     this._capturedBlob = null;
   }
 
-  init() {
+  async init() {
     if (!localStorage.getItem('token')) {
       alert('Harus login dulu');
-      window.location.hash = '#/login';
+      window.location.hash = '/login';
       return;
     }
 
@@ -26,6 +26,8 @@ export default class AddPresenter {
     this._initCamera();
     this._initForm();
   }
+
+  /* ================= MAP ================= */
 
   _initMap() {
     this._map = L.map('map').setView([-6.2, 106.8], 10);
@@ -51,32 +53,38 @@ export default class AddPresenter {
     });
   }
 
+  /* ================= CAMERA ================= */
+
   _initCamera() {
-    document.querySelector('#btn-start-camera').addEventListener('click', async () => {
-      await this._startCamera();
-    });
+    document.querySelector('#btn-start-camera')
+      .addEventListener('click', async () => {
+        await this._startCamera();
+      });
 
-    document.querySelector('#btn-switch').addEventListener('click', async () => {
-      this._facingMode =
-        this._facingMode === 'environment' ? 'user' : 'environment';
+    document.querySelector('#btn-switch')
+      .addEventListener('click', async () => {
+        this._facingMode =
+          this._facingMode === 'environment' ? 'user' : 'environment';
 
-      await this._startCamera();
-    });
+        await this._startCamera();
+      });
 
-    document.querySelector('#btn-capture').addEventListener('click', async () => {
-      const blob = await this._takePhoto();
-      this._capturedBlob = blob;
+    document.querySelector('#btn-capture')
+      .addEventListener('click', async () => {
+        const blob = await this._takePhoto();
+        this._capturedBlob = blob;
 
-      const imageUrl = URL.createObjectURL(blob);
-      this._view.showPreview(imageUrl);
+        const imageUrl = URL.createObjectURL(blob);
+        this._view.showPreview(imageUrl);
 
-      this._stopCamera();
-    });
+        this._stopCamera();
+      });
 
-    document.querySelector('#btn-retake').addEventListener('click', async () => {
-      this._capturedBlob = null;
-      await this._startCamera();
-    });
+    document.querySelector('#btn-retake')
+      .addEventListener('click', async () => {
+        this._capturedBlob = null;
+        await this._startCamera();
+      });
   }
 
   async _startCamera() {
@@ -113,28 +121,77 @@ export default class AddPresenter {
     });
   }
 
-  _initForm() {
-    document.querySelector('#story-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+  /* ================= IMAGE COMPRESS ================= */
 
-      const description = document.querySelector('#description').value;
-      const fileInput = document.querySelector('#photo-file');
+  async _compressImage(file) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const reader = new FileReader();
 
-      let photo = fileInput.files[0] || this._capturedBlob;
+      reader.onload = (e) => {
+        img.src = e.target.result;
+      };
 
-      if (!photo) {
-        alert('Upload atau ambil gambar dulu');
-        return;
-      }
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
 
-      if (!this._selectedLat || !this._selectedLon) {
-        alert('Pilih lokasi di peta');
-        return;
-      }
+        const MAX_WIDTH = 800;
+        const scale = MAX_WIDTH / img.width;
 
-      await this._submitData({ description, photo });
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * scale;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(
+          (blob) => {
+            resolve(blob);
+          },
+          'image/jpeg',
+          0.7 // 🔥 kualitas
+        );
+      };
+
+      reader.readAsDataURL(file);
     });
   }
+
+  /* ================= FORM ================= */
+
+  _initForm() {
+    document.querySelector('#story-form')
+      .addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const description = document.querySelector('#description').value;
+        const fileInput = document.querySelector('#photo-file');
+
+        let photo = fileInput.files[0] || this._capturedBlob;
+
+        if (!photo) {
+          alert('Upload atau ambil gambar dulu');
+          return;
+        }
+
+        if (!this._selectedLat || !this._selectedLon) {
+          alert('Pilih lokasi di peta');
+          return;
+        }
+
+        // 🔥 COMPRESS WAJIB
+        photo = await this._compressImage(photo);
+
+        console.log('SIZE (KB):', photo.size / 1024);
+
+        await this._submitData({
+          description,
+          photo,
+        });
+      });
+  }
+
+  /* ================= SUBMIT ================= */
 
   async _submitData({ description, photo }) {
     try {
@@ -144,17 +201,11 @@ export default class AddPresenter {
       formData.append('lat', this._selectedLat);
       formData.append('lon', this._selectedLon);
 
-      const result = await API.addStory(formData);
-      console.log('ADD RESULT:', result);
+      await API.addStory(formData);
 
-      if (!result.error) {
-        alert('Berhasil tambah data');
+      alert('Berhasil tambah data');
+      window.location.hash = '/';
 
-        window.location.hash = '#/';
-        window.location.reload();
-      } else {
-        alert('Gagal: ' + result.message);
-      }
     } catch (err) {
       alert('Gagal kirim: ' + err.message);
     }
