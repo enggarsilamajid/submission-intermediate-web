@@ -12,7 +12,7 @@ class App {
     this.#navigationDrawer = navigationDrawer;
 
     this.#setupDrawer();
-    this.#setupGlobalLoading();
+    // this.#setupGlobalLoading();
   }
 
   #setupDrawer() {
