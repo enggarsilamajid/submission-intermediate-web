@@ -48,26 +48,34 @@ class App {
   }
 
   async renderPage() {
-    const url = getActiveRoute();
-    const page = routes[url];
+  const url = getActiveRoute();
+  const page = routes[url];
 
+  const isMapPage = url === '/' || url === '/add'; // 🔥 halaman yang pakai Leaflet
+
+  // ❌ JANGAN animasi kalau ada map
+  if (!isMapPage) {
     this.#content.classList.remove('fade-in');
     this.#content.classList.add('fade-out');
 
     await new Promise((r) => setTimeout(r, 300));
+  }
 
-    this.#content.innerHTML = await page.render();
+  this.#content.innerHTML = await page.render();
 
-    await new Promise((r) => requestAnimationFrame(r));
+  await new Promise((r) => requestAnimationFrame(r));
 
-    await page.afterRender();
+  await page.afterRender();
 
-    this.#content.setAttribute('tabindex', '-1');
-    this.#content.focus();
+  this.#content.setAttribute('tabindex', '-1');
+  this.#content.focus();
 
+  // ❌ JANGAN animasi kalau ada map
+  if (!isMapPage) {
     this.#content.classList.remove('fade-out');
     this.#content.classList.add('fade-in');
   }
+}
 }
 
 export default App;

@@ -14,7 +14,7 @@ body {
 
 /* ===== TRANSITION SPA ===== */
 #main-content {
-  transition: opacity 0.3s ease;
+  opacity: 1;
 }
 
 .fade-out {
