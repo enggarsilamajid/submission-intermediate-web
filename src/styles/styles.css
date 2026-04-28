@@ -5,6 +5,10 @@
 }
 
 body {
+  background: red !important;
+}
+
+body {
   font-family: 'Arial', sans-serif;
 }
 
