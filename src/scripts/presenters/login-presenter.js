@@ -26,12 +26,10 @@ export default class LoginPresenter {
           return;
         }
 
-        // ✅ SIMPAN TOKEN
         localStorage.setItem('token', response.loginResult.token);
 
         this._view.showSuccess('Login berhasil!');
 
-        // 🔥 redirect ke home
         window.location.hash = '#/';
 
       } catch (error) {

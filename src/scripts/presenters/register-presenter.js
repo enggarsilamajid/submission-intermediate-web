@@ -29,7 +29,6 @@ export default class RegisterPresenter {
 
         this._view.showSuccess('Register berhasil! Silakan login.');
 
-        // 🔥 redirect ke login
         setTimeout(() => {
           window.location.hash = '#/login';
         }, 1000);

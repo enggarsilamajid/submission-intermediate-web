@@ -27,7 +27,6 @@ export default class AddPresenter {
     this._initForm();
   }
 
-  /* ================= MAP ================= */
 
   _initMap() {
     this._map = L.map('map').setView([-6.2, 106.8], 10);
@@ -52,8 +51,6 @@ export default class AddPresenter {
       this._view.updateLatLon(lat, lng);
     });
   }
-
-  /* ================= CAMERA ================= */
 
   _initCamera() {
     document.querySelector('#btn-start-camera')
@@ -121,8 +118,6 @@ export default class AddPresenter {
     });
   }
 
-  /* ================= IMAGE COMPRESS ================= */
-
   async _compressImage(file) {
     return new Promise((resolve) => {
       const img = new Image();
@@ -149,15 +144,13 @@ export default class AddPresenter {
             resolve(blob);
           },
           'image/jpeg',
-          0.7 // 🔥 kualitas
+          0.7
         );
       };
 
       reader.readAsDataURL(file);
     });
   }
-
-  /* ================= FORM ================= */
 
   _initForm() {
     document.querySelector('#story-form')
@@ -179,7 +172,6 @@ export default class AddPresenter {
           return;
         }
 
-        // 🔥 COMPRESS WAJIB
         photo = await this._compressImage(photo);
 
         console.log('SIZE (KB):', photo.size / 1024);
@@ -190,8 +182,6 @@ export default class AddPresenter {
         });
       });
   }
-
-  /* ================= SUBMIT ================= */
 
   async _submitData({ description, photo }) {
     try {

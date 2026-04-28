@@ -1,7 +1,6 @@
 import API from '../data/api';
 import L from 'leaflet';
 
-// ✅ FIX ICON (WAJIB untuk bundler)
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -23,12 +22,10 @@ export default class HomePresenter {
 
       this._view.renderStories(stories);
 
-      // 🔥 pastikan DOM siap
       requestAnimationFrame(() => {
         this._initMap();
         this._addMarkers(stories);
 
-        // optional: bantu Leaflet hitung ulang
         setTimeout(() => {
           this._map.invalidateSize();
         }, 200);
@@ -44,7 +41,6 @@ export default class HomePresenter {
       zoomControl: true,
     }).setView([-2.5, 118], 5);
 
-    // 🌍 DEFAULT MAP
     const osm = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
@@ -52,7 +48,6 @@ export default class HomePresenter {
       }
     );
 
-    // 🛰 SATELLITE
     const satellite = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       {
@@ -62,7 +57,6 @@ export default class HomePresenter {
 
     osm.addTo(this._map);
 
-    // 🎛 DROPDOWN LAYER
     L.control.layers(
       {
         Default: osm,
@@ -89,7 +83,6 @@ export default class HomePresenter {
             ${story.description}
           `);
 
-        // ✅ Klik marker → jadi transparan
         marker.on('click', () => {
           this._resetMarkers();
 
@@ -101,7 +94,6 @@ export default class HomePresenter {
       }
     });
 
-    // ✅ Zoom ke semua marker
     if (this._markers.length > 0) {
       const group = L.featureGroup(this._markers);
       this._map.fitBounds(group.getBounds(), {
@@ -109,18 +101,15 @@ export default class HomePresenter {
       });
     }
 
-    // ✅ Klik area map → reset marker
     this._map.on('click', () => {
       this._resetMarkers();
     });
 
-    // ✅ Tutup popup → reset juga
     this._map.on('popupclose', () => {
       this._resetMarkers();
     });
   }
 
-  // 🔥 Reset semua marker ke normal
   _resetMarkers() {
     this._markers.forEach((marker) => {
       marker.setOpacity(1);

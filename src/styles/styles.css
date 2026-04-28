@@ -1,23 +1,19 @@
-/* ===== RESET ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* ===== BASE ===== */
 body {
   font-family: 'Arial', sans-serif;
   background: #f5f7fa;
   color: #222;
 }
 
-/* ===== VARIABLE ===== */
 :root {
   --nav-height: 70px;
 }
 
-/* ===== TRANSITION SPA ===== */
 #main-content {
   transition: opacity 0.3s ease, transform 0.3s ease;
   will-change: opacity, transform;
@@ -33,7 +29,6 @@ body {
   transform: translateY(0);
 }
 
-/* ===== SKIP LINK ===== */
 .skip-link {
   position: absolute;
   top: -50px;
@@ -48,7 +43,6 @@ body {
   top: 10px;
 }
 
-/* ===== ACCESSIBILITY ===== */
 a:focus,
 button:focus,
 input:focus {
@@ -56,13 +50,11 @@ input:focus {
   outline-offset: 2px;
 }
 
-/* ===== GLOBAL IMAGE ===== */
 img {
   max-width: 100%;
   display: block;
 }
 
-/* ===== FORM GLOBAL ===== */
 input,
 button {
   width: 100%;
@@ -71,14 +63,12 @@ button {
   padding: 8px;
 }
 
-/* ===== CONTAINER ===== */
 .container {
   padding-inline: 16px;
   margin-inline: auto;
   max-width: 1200px;
 }
 
-/* ===== HEADER ===== */
 header {
   background-color: lightskyblue;
   position: sticky;
@@ -104,7 +94,6 @@ header {
   color: #333;
 }
 
-/* ===== NAV DRAWER ===== */
 .navigation-drawer {
   min-height: 100vh;
   width: 220px;
@@ -133,7 +122,6 @@ header {
   cursor: pointer;
 }
 
-/* ===== NAV LIST ===== */
 .nav-list {
   list-style: none;
   display: flex;
@@ -153,24 +141,17 @@ header {
   border-radius: 6px;
 }
 
-/* ===== MAIN ===== */
 .main-content {
   padding: 16px;
 }
 
-/* ===== SECTION ===== */
 section {
   margin-top: 16px;
 }
 
-/* ===== FIX HOME ===== */
 .home-page {
   padding-top: var(--nav-height);
 }
-
-/* ========================= */
-/* ===== MAP ===== */
-/* ========================= */
 
 .map-wrapper {
   margin-top: 16px;
@@ -198,10 +179,6 @@ section {
   }
 }
 
-/* ========================= */
-/* ===== AUTH FORM FIX ===== */
-/* ========================= */
-
 .auth-form {
   display: flex;
   flex-direction: column; /* 🔥 FIX UTAMA */
@@ -212,7 +189,6 @@ section {
   padding-top: var(--nav-height);
 }
 
-/* form container */
 .auth-form form {
   width: 100%;
   max-width: 400px;
@@ -228,7 +204,6 @@ section {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* spacing antar elemen */
 .auth-form h1 {
   margin-bottom: 16px;
 }
@@ -237,10 +212,6 @@ section {
   margin-top: 16px;
   text-align: center;
 }
-
-/* ========================= */
-/* ===== STORY ===== */
-/* ========================= */
 
 .story-list {
   display: grid;
@@ -294,7 +265,6 @@ section {
   color: #555;
 }
 
-/* ===== FIX NAVBAR BUTTON AGAR TIDAK FULL WIDTH ===== */
 .drawer-button {
   width: auto !important;
   max-width: none;
@@ -305,21 +275,15 @@ section {
   justify-content: center;
 }
 
-/* ===== PASTIKAN POSISI KE KANAN ===== */
 .main-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* optional: kasih jarak kanan */
 .drawer-button {
   margin-left: auto;
 }
-
-/* ========================= */
-/* ===== DESKTOP NAV ===== */
-/* ========================= */
 
 @media screen and (min-width: 1000px) {
   .navigation-drawer {
@@ -341,7 +305,6 @@ section {
   }
 }
 
-/* ===== FIX LEAFLET BUG ===== */
 .leaflet-pane,
 .leaflet-map-pane,
 .leaflet-tile,

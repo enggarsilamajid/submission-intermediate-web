@@ -7,8 +7,4 @@ export default class AboutPage {
       </section>
     `;
   }
-
-  async afterRender() {
-    // Do your job here
-  }
 }
