@@ -1,7 +1,6 @@
 import API from '../data/api';
 import L from 'leaflet';
 
-// ✅ FIX ICON (biar marker selalu muncul)
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -27,7 +26,6 @@ export default class HomePresenter {
       this._initMap();
       this._addMarkers(stories);
 
-      // 🔥 penting untuk mencegah map “geser”
       setTimeout(() => {
         this._map.invalidateSize();
       }, 300);
@@ -42,7 +40,6 @@ export default class HomePresenter {
       zoomControl: true,
     }).setView([-2.5, 118], 5);
 
-    // ✅ DEFAULT MAP (OSM)
     const osm = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
@@ -50,7 +47,6 @@ export default class HomePresenter {
       }
     );
 
-    // ✅ SATELLITE MAP (ESRI)
     const satellite = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       {
@@ -58,18 +54,16 @@ export default class HomePresenter {
       }
     );
 
-    // aktifkan default
     osm.addTo(this._map);
 
-    // ✅ layer switcher
     const baseMaps = {
       'Default': osm,
       'Satellite': satellite,
     };
 
     L.control.layers(baseMaps, null, {
-      position: 'topright', // 🔥 BONUS posisi
-      collapsed: false,     // 🔥 BONUS selalu terbuka (optional)
+      position: 'topright',
+      collapsed: true,
     }).addTo(this._map);
   }
 
@@ -89,7 +83,6 @@ export default class HomePresenter {
       }
     });
 
-    // ✅ zoom ke semua marker
     if (this._markers.length > 0) {
       const group = L.featureGroup(this._markers);
       this._map.fitBounds(group.getBounds(), {

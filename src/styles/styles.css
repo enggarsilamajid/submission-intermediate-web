@@ -181,8 +181,6 @@ section {
 /* ========================= */
 /* ===== STORY (SCOPED) ==== */
 /* ========================= */
-
-/* 🔥 penting: semua styling story DIISOLASI */
 .story-list {
   display: grid;
   grid-template-columns: 1fr;
@@ -216,7 +214,6 @@ section {
   transform: translateY(-4px);
 }
 
-/* 🔥 tidak ganggu img global */
 .story-card img {
   width: 100%;
   height: 200px;
