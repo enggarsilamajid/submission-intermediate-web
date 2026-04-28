@@ -294,6 +294,29 @@ section {
   color: #555;
 }
 
+/* ===== FIX NAVBAR BUTTON AGAR TIDAK FULL WIDTH ===== */
+.drawer-button {
+  width: auto !important;
+  max-width: none;
+  margin: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== PASTIKAN POSISI KE KANAN ===== */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* optional: kasih jarak kanan */
+.drawer-button {
+  margin-left: auto;
+}
+
 /* ========================= */
 /* ===== DESKTOP NAV ===== */
 /* ========================= */
