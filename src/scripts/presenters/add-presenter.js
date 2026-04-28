@@ -185,14 +185,23 @@ export default class AddPresenter {
 
   async _submitData({ description, photo }) {
     try {
-      alert(localStorage.getItem('token'));
+      const token = localStorage.getItem('token');
+      alert('TOKEN: ' + token); 
+
       const formData = new FormData();
       formData.append('description', description);
       formData.append('photo', photo);
       formData.append('lat', this._selectedLat);
       formData.append('lon', this._selectedLon);
 
-      await API.addStory(formData);
+      const result = await API.addStory(formData);
+
+      alert('RESPONSE: ' + JSON.stringify(result));
+
+      if (result.error) {
+        alert('Gagal: ' + result.message);
+        return;
+      }
 
       alert('Berhasil tambah data');
       window.location.hash = '/';

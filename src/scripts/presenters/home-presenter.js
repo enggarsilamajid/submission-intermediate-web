@@ -18,18 +18,15 @@ export default class HomePresenter {
   async init() {
     try {
       const response = await API.getStories();
-      const stories = response?.listStory || [];
+
+      const stories = response.listStory || [];
+
+      alert('JUMLAH DATA: ' + stories.length);
 
       this._view.renderStories(stories);
 
-      requestAnimationFrame(() => {
-        this._initMap();
-        this._addMarkers(stories);
-
-        setTimeout(() => {
-          this._map.invalidateSize();
-        }, 200);
-      });
+      this._initMap();
+      this._addMarkers(stories);
 
     } catch (error) {
       this._view.renderError(error.message);

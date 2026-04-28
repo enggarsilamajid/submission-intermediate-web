@@ -11,13 +11,17 @@ const API = {
   async getStories() {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(ENDPOINTS.STORIES, {
+    const response = await fetch(`${BASE_URL}/stories`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    return response.json();
+    const json = await response.json();
+
+    alert('GET STORIES: ' + JSON.stringify(json));
+
+    return json;
   },
 
   async login({ email, password }) {
@@ -47,9 +51,7 @@ const API = {
   async addStory(formData) {
     const token = localStorage.getItem('token');
 
-    if (!token) throw new Error('Token tidak ditemukan');
-
-    const response = await fetch(ENDPOINTS.STORIES, {
+    const response = await fetch(`${BASE_URL}/stories`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -57,8 +59,12 @@ const API = {
       body: formData,
     });
 
-    return response.json();
-  },
+    const json = await response.json();
+
+    alert('ADD RESPONSE: ' + JSON.stringify(json));
+
+    return json;
+  }
 };
 
 export default API;
