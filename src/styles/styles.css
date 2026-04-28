@@ -45,6 +45,21 @@ body {
   top: 10px;
 }
 
+/* ===== PAGE TRANSITION ===== */
+#main-content {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ===== ACCESSIBILITY ===== */
 a:focus,
 button:focus,
