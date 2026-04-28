@@ -1,36 +1,45 @@
-import LoginPresenter from '../../presenters/login-presenter';
+import API from '../../data/api';
 
 export default class LoginPage {
   async render() {
     return `
-      <section class="container">
+      <section>
         <h1>Login</h1>
 
         <form id="login-form">
-          <label>Email</label><br/>
-          <input id="email" type="email" required /><br/><br/>
+          <label>Email</label>
+          <input type="email" id="email" required />
 
-          <label>Password</label><br/>
-          <input id="password" type="password" required /><br/><br/>
+          <label>Password</label>
+          <input type="password" id="password" required />
 
-          <button id="submit-btn" type="submit">Login</button>
-
-          <p id="status"></p>
+          <button type="submit">Login</button>
         </form>
+
+        <p>Belum punya akun? <a href="#/register">Register</a></p>
       </section>
     `;
   }
 
   async afterRender() {
-    this._presenter = new LoginPresenter({ view: this });
-    this._presenter.init();
-  }
+    document.querySelector('#login-form')
+      .addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-  showSuccess(message) {
-    document.querySelector('#status').innerText = message;
-  }
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
 
-  showError(message) {
-    document.querySelector('#status').innerText = `Error: ${message}`;
+        try {
+          const result = await API.login({ email, password });
+
+          localStorage.setItem('token', result.token);
+
+          alert('Login berhasil');
+
+          window.location.hash = '/';
+        } catch (err) {
+          alert(err.message);
+        }
+      });
   }
 }

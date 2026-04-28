@@ -1,39 +1,47 @@
-import RegisterPresenter from '../../presenters/register-presenter';
+import API from '../../data/api';
 
 export default class RegisterPage {
   async render() {
     return `
-      <section class="container">
+      <section>
         <h1>Register</h1>
 
         <form id="register-form">
-          <label>Nama</label><br/>
-          <input id="name" type="text" required /><br/><br/>
+          <label>Nama</label>
+          <input type="text" id="name" required />
 
-          <label>Email</label><br/>
-          <input id="email" type="email" required /><br/><br/>
+          <label>Email</label>
+          <input type="email" id="email" required />
 
-          <label>Password</label><br/>
-          <input id="password" type="password" required /><br/><br/>
+          <label>Password</label>
+          <input type="password" id="password" required />
 
-          <button id="submit-btn" type="submit">Register</button>
-
-          <p id="status"></p>
+          <button type="submit">Register</button>
         </form>
+
+        <p>Sudah punya akun? <a href="#/login">Login</a></p>
       </section>
     `;
   }
 
   async afterRender() {
-    this._presenter = new RegisterPresenter({ view: this });
-    this._presenter.init();
-  }
+    document.querySelector('#register-form')
+      .addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-  showSuccess(message) {
-    document.querySelector('#status').innerText = message;
-  }
+        const name = document.querySelector('#name').value;
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
 
-  showError(message) {
-    document.querySelector('#status').innerText = `Error: ${message}`;
+        try {
+          await API.register({ name, email, password });
+
+          alert('Register berhasil, silakan login');
+
+          window.location.hash = '/login';
+        } catch (err) {
+          alert(err.message);
+        }
+      });
   }
 }
