@@ -3,10 +3,10 @@ import API from '../../data/api';
 export default class LoginPage {
   async render() {
     return `
-      <section>
+      <section class="auth-form">
         <h1>Login</h1>
 
-        <form class="auth-form" id="login-form">
+        <form id="login-form">
           <label>Email</label>
           <input type="email" id="email" required />
 
