@@ -8,6 +8,10 @@ body {
   font-family: 'Arial', sans-serif;
 }
 
+body {
+  background: blue !important;
+}
+
 /* ===== GLOBAL LOADING ===== */
 .loader {
   position: fixed;
