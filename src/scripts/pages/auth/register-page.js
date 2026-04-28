@@ -3,7 +3,7 @@ import RegisterPresenter from '../../presenters/register-presenter';
 export default class RegisterPage {
   async render() {
     return `
-      <section>
+      <section class="container">
         <h1>Register</h1>
 
         <form id="register-form">

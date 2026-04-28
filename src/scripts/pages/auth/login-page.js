@@ -3,7 +3,7 @@ import LoginPresenter from '../../presenters/login-presenter';
 export default class LoginPage {
   async render() {
     return `
-      <section>
+      <section class="container">
         <h1>Login</h1>
 
         <form id="login-form">

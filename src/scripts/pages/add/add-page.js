@@ -3,7 +3,7 @@ import AddPresenter from '../../presenters/add-presenter';
 export default class AddPage {
   async render() {
     return `
-      <section>
+      <section class="container">
         <h1>Tambah Data</h1>
 
         <form id="story-form">
