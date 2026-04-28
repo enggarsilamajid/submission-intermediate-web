@@ -16,15 +16,15 @@ export default class AddPresenter {
   }
 
   init() {
+    if (!localStorage.getItem('token')) {
+      alert('Harus login dulu');
+      window.location.hash = '#/login';
+      return;
+    }
+
     this._initMap();
     this._initCamera();
     this._initForm();
-
-    if (!localStorage.getItem('token')) {
-      alert('Harus login dulu');
-      window.location.hash = '/login';
-      return;
-    }
   }
 
   _initMap() {
@@ -68,7 +68,6 @@ export default class AddPresenter {
       this._capturedBlob = blob;
 
       const imageUrl = URL.createObjectURL(blob);
-
       this._view.showPreview(imageUrl);
 
       this._stopCamera();
@@ -133,10 +132,7 @@ export default class AddPresenter {
         return;
       }
 
-      await this._submitData({
-        description,
-        photo,
-      });
+      await this._submitData({ description, photo });
     });
   }
 
@@ -148,10 +144,17 @@ export default class AddPresenter {
       formData.append('lat', this._selectedLat);
       formData.append('lon', this._selectedLon);
 
-      await API.addStory(formData);
+      const result = await API.addStory(formData);
+      console.log('ADD RESULT:', result);
 
-      alert('Berhasil tambah data');
-      window.location.hash = '/';
+      if (!result.error) {
+        alert('Berhasil tambah data');
+
+        window.location.hash = '#/';
+        window.location.reload();
+      } else {
+        alert('Gagal: ' + result.message);
+      }
     } catch (err) {
       alert('Gagal kirim: ' + err.message);
     }
