@@ -24,13 +24,20 @@ export default class HomePage {
       return;
     }
 
-    container.innerHTML = stories.map((story) => `
-      <div>
-        <img src="${story.photoUrl}" alt="${story.name}" />
-        <h3>${story.name}</h3>
-        <p>${story.description}</p>
+    container.innerHTML = `
+      <div class="story-list">
+        ${stories.map((story) => `
+          <article class="story-card">
+            <img src="${story.photoUrl}" alt="${story.name}" />
+
+            <div class="story-content">
+              <h3>${story.name}</h3>
+              <p>${story.description}</p>
+            </div>
+          </article>
+        `).join('')}
       </div>
-    `).join('');
+    `;
   }
 
   renderError(message) {
