@@ -1,70 +1,62 @@
-import CONFIG from '../../config.js';
+import HomePresenter from '../../presenters/home-presenter';
 
-const ENDPOINTS = {
-  STORIES: `${CONFIG.BASE_URL}/stories`,
-  LOGIN: `${CONFIG.BASE_URL}/login`,
-  REGISTER: `${CONFIG.BASE_URL}/register`,
-};
+export default class HomePage {
+  async render() {
+    return `
+      <section class="home-page">
+        <h1>Home</h1>
 
-const API = {
-  async getStories() {
-    const token = localStorage.getItem('token');
+        <!-- MAP WRAPPER (WAJIB untuk layout stabil) -->
+        <div class="map-wrapper">
+          <div id="map"></div>
+        </div>
 
-    const response = await fetch(ENDPOINTS.STORIES, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+        <!-- STORIES -->
+        <div id="stories" class="stories-container"></div>
+      </section>
+    `;
+  }
 
-    return await response.json();
-  },
+  async afterRender() {
+    const presenter = new HomePresenter({ view: this });
+    await presenter.init();
+  }
 
-  async login({ email, password }) {
-    const response = await fetch(ENDPOINTS.LOGIN, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+  renderStories(stories) {
+    const container = document.querySelector('#stories');
 
-    return await response.json();
-  },
-
-  async register({ name, email, password }) {
-    const response = await fetch(ENDPOINTS.REGISTER, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    return await response.json();
-  },
-
-  async addStory({ description, photo, lat, lon }) {
-    const token = localStorage.getItem('token');
-
-    const formData = new FormData();
-    formData.append('description', description);
-    formData.append('photo', photo);
-
-    if (lat && lon) {
-      formData.append('lat', lat);
-      formData.append('lon', lon);
+    if (!stories || stories.length === 0) {
+      container.innerHTML = `
+        <p style="margin-top:16px;">Tidak ada data</p>
+      `;
+      return;
     }
 
-    const response = await fetch(ENDPOINTS.STORIES, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+    container.innerHTML = `
+      <div class="story-list">
+        ${stories.map((story) => `
+          <article class="story-card">
+            <img 
+              src="${story.photoUrl}" 
+              alt="Foto dari ${story.name}" 
+              loading="lazy"
+            />
 
-    return await response.json();
-  },
-};
+            <div class="story-content">
+              <h3>${story.name}</h3>
+              <p>${story.description}</p>
+            </div>
+          </article>
+        `).join('')}
+      </div>
+    `;
+  }
 
-export default API;
+  renderError(message) {
+    document.querySelector('#stories').innerHTML = `
+      <p style="color:red; margin-top:16px;">
+        Error: ${message}
+      </p>
+    `;
+  }
+}
