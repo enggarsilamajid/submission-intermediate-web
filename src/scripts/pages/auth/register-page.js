@@ -3,7 +3,7 @@ import API from '../../data/api';
 export default class RegisterPage {
   async render() {
     return `
-      <section class="auth-page">
+      <section class="auth-form">
         <h1>Register</h1>
 
         <form id="register-form">

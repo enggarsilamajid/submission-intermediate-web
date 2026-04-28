@@ -204,7 +204,7 @@ section {
 }
 
 /* ===== AUTH FORM (VERTICAL FIX) ===== */
-.auth-page {
+.auth-form {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -213,7 +213,7 @@ section {
 }
 
 /* container form */
-.auth-page form {
+.auth-form form {
   width: 100%;
   max-width: 400px;
 
@@ -229,24 +229,24 @@ section {
 }
 
 /* label */
-.auth-page label {
+.auth-form label {
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 /* input */
-.auth-page input {
+.auth-form input {
   width: 100%;
 }
 
 /* button */
-.auth-page button {
+.auth-form button {
   width: 100%;
   cursor: pointer;
 }
 
 /* status text */
-.auth-page #status {
+.auth-form #status {
   text-align: center;
   font-size: 14px;
 }
