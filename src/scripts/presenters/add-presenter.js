@@ -185,6 +185,7 @@ export default class AddPresenter {
 
   async _submitData({ description, photo }) {
     try {
+      alert(localStorage.getItem('token'));
       const formData = new FormData();
       formData.append('description', description);
       formData.append('photo', photo);

@@ -6,36 +6,33 @@ export default class LoginPresenter {
   }
 
   init() {
-    const form = document.querySelector('#login-form');
+    document.querySelector('#login-form')
+      .addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
 
-      const email = document.querySelector('#email').value;
-      const password = document.querySelector('#password').value;
+        try {
+          alert(JSON.stringify(result));
+          const result = await API.login({ email, password });
 
-      try {
-        window.showLoading?.();
+          if (result.error) {
+            this._view.showError(result.message);
+            return;
+          }
 
-        const response = await API.login({ email, password });
+          localStorage.setItem('token', result.loginResult.token);
+          localStorage.setItem('name', result.loginResult.name);
 
-        window.hideLoading?.();
+          this._view.showSuccess('Login berhasil');
 
-        if (response.error) {
-          this._view.showError(response.message);
-          return;
+          window.location.hash = '/';
+          alert(localStorage.getItem('token'));
+
+        } catch (err) {
+          this._view.showError(err.message);
         }
-
-        localStorage.setItem('token', response.loginResult.token);
-
-        this._view.showSuccess('Login berhasil!');
-
-        window.location.hash = '#/';
-
-      } catch (error) {
-        window.hideLoading?.();
-        this._view.showError(error.message);
-      }
-    });
+      });
   }
 }

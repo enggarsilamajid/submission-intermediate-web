@@ -7,6 +7,7 @@ const ENDPOINTS = {
 };
 
 const API = {
+
   async getStories() {
     const token = localStorage.getItem('token');
 
@@ -16,12 +17,37 @@ const API = {
       },
     });
 
-    const responseJson = await response.json();
-    return responseJson;
+    return response.json();
+  },
+
+  async login({ email, password }) {
+    const response = await fetch(ENDPOINTS.LOGIN, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    return response.json();
+  },
+
+  async register({ name, email, password }) {
+    const response = await fetch(ENDPOINTS.REGISTER, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    return response.json();
   },
 
   async addStory(formData) {
     const token = localStorage.getItem('token');
+
+    if (!token) throw new Error('Token tidak ditemukan');
 
     const response = await fetch(ENDPOINTS.STORIES, {
       method: 'POST',
@@ -31,28 +57,7 @@ const API = {
       body: formData,
     });
 
-    const responseJson = await response.json();
-    return responseJson;
-  },
-
-  async login({ email, password }) {
-    const response = await fetch(ENDPOINTS.LOGIN, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-
-    return await response.json();
-  },
-
-  async register({ name, email, password }) {
-    const response = await fetch(ENDPOINTS.REGISTER, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    return await response.json();
+    return response.json();
   },
 };
 
