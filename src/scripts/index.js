@@ -1,4 +1,4 @@
-import '../styles/styles.css';
+import '/src/styles/styles.css';
 
 import 'leaflet/dist/leaflet.css';
 
