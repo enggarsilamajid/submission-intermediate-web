@@ -1,7 +1,7 @@
 import API from '../data/api';
 import L from 'leaflet';
 
-// FIX ICON
+// ✅ FIX ICON (WAJIB untuk bundler)
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -13,6 +13,7 @@ export default class HomePresenter {
     this._view = view;
     this._map = null;
     this._markers = [];
+    this._activeMarker = null;
   }
 
   async init() {
@@ -22,18 +23,15 @@ export default class HomePresenter {
 
       this._view.renderStories(stories);
 
-      // 🔥 TUNGGU LAYOUT BENAR-BENAR STABIL
+      // 🔥 pastikan DOM siap
       requestAnimationFrame(() => {
+        this._initMap();
+        this._addMarkers(stories);
+
+        // optional: bantu Leaflet hitung ulang
         setTimeout(() => {
-          this._initMap();
-          this._addMarkers(stories);
-
-          // 🔥 INI KUNCI UTAMA FIX MARKER
-          setTimeout(() => {
-            this._map.invalidateSize();
-          }, 300);
-
-        }, 50);
+          this._map.invalidateSize();
+        }, 200);
       });
 
     } catch (error) {
@@ -46,6 +44,7 @@ export default class HomePresenter {
       zoomControl: true,
     }).setView([-2.5, 118], 5);
 
+    // 🌍 DEFAULT MAP
     const osm = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
@@ -53,6 +52,7 @@ export default class HomePresenter {
       }
     );
 
+    // 🛰 SATELLITE
     const satellite = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       {
@@ -62,6 +62,7 @@ export default class HomePresenter {
 
     osm.addTo(this._map);
 
+    // 🎛 DROPDOWN LAYER
     L.control.layers(
       {
         Default: osm,
@@ -77,6 +78,7 @@ export default class HomePresenter {
 
   _addMarkers(stories) {
     this._markers = [];
+    this._activeMarker = null;
 
     stories.forEach((story) => {
       if (story.lat && story.lon) {
@@ -87,15 +89,43 @@ export default class HomePresenter {
             ${story.description}
           `);
 
+        // ✅ Klik marker → jadi transparan
+        marker.on('click', () => {
+          this._resetMarkers();
+
+          marker.setOpacity(0.5);
+          this._activeMarker = marker;
+        });
+
         this._markers.push(marker);
       }
     });
 
+    // ✅ Zoom ke semua marker
     if (this._markers.length > 0) {
       const group = L.featureGroup(this._markers);
       this._map.fitBounds(group.getBounds(), {
         padding: [50, 50],
       });
     }
+
+    // ✅ Klik area map → reset marker
+    this._map.on('click', () => {
+      this._resetMarkers();
+    });
+
+    // ✅ Tutup popup → reset juga
+    this._map.on('popupclose', () => {
+      this._resetMarkers();
+    });
+  }
+
+  // 🔥 Reset semua marker ke normal
+  _resetMarkers() {
+    this._markers.forEach((marker) => {
+      marker.setOpacity(1);
+    });
+
+    this._activeMarker = null;
   }
 }
