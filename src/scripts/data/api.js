@@ -1,48 +1,14 @@
 import CONFIG from '../config';
 
-const ENDPOINTS = {
-  STORIES: `${CONFIG.BASE_URL}/stories`,
-  LOGIN: `${CONFIG.BASE_URL}/login`,
-  REGISTER: `${CONFIG.BASE_URL}/register`,
-};
-
 const API = {
 
   async getStories() {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(`${BASE_URL}/stories`, {
+    const response = await fetch(`${CONFIG.BASE_URL}/stories`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    const json = await response.json();
-
-    alert('GET STORIES: ' + JSON.stringify(json));
-
-    return json;
-  },
-
-  async login({ email, password }) {
-    const response = await fetch(ENDPOINTS.LOGIN, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    return response.json();
-  },
-
-  async register({ name, email, password }) {
-    const response = await fetch(ENDPOINTS.REGISTER, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
     });
 
     return response.json();
@@ -51,7 +17,7 @@ const API = {
   async addStory(formData) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(`${BASE_URL}/stories`, {
+    const response = await fetch(`${CONFIG.BASE_URL}/stories`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -59,12 +25,28 @@ const API = {
       body: formData,
     });
 
-    const json = await response.json();
+    return response.json();
+  },
 
-    alert('ADD RESPONSE: ' + JSON.stringify(json));
+  async login(data) {
+    const response = await fetch(`${CONFIG.BASE_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
 
-    return json;
-  }
+    return response.json();
+  },
+
+  async register(data) {
+    const response = await fetch(`${CONFIG.BASE_URL}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    return response.json();
+  },
 };
 
 export default API;
