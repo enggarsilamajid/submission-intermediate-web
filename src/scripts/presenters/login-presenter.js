@@ -16,41 +16,52 @@ export default class LoginPresenter {
         try {
           const result = await API.login({ email, password });
 
-// ❌ HAPUS DEBUG
-// alert('LOGIN RESPONSE: ' + JSON.stringify(result));
+          // 🔍 HANDLE ERROR DARI API
+          if (result.error) {
+            const message = result.message.toLowerCase();
 
-if (result.error) {
+            // ❌ USER BELUM TERDAFTAR
+            if (message.includes('not found')) {
+              alert('Akun belum terdaftar, silakan register dulu');
+              window.location.hash = '/register';
+            } 
+            // ❌ PASSWORD SALAH / UNAUTHORIZED
+            else if (
+              message.includes('password') ||
+              message.includes('unauthorized')
+            ) {
+              alert('Email atau password salah');
+            } 
+            // ❌ FORMAT EMAIL SALAH
+            else if (message.includes('valid email')) {
+              alert('Format email tidak valid');
+            } 
+            // ❌ ERROR LAIN
+            else {
+              alert('Login gagal: ' + result.message);
+            }
 
-  const message = result.message.toLowerCase();
+            return; // 🔥 WAJIB STOP
+          }
 
-  // 🔥 HANDLE SEMUA ERROR LOGIN
-  if (
-    message.includes('not found') ||
-    message.includes('user') ||
-    message.includes('email')
-  ) {
-    alert('Silakan register dulu');
-    window.location.hash = '/register';
-  } else {
-    alert('Email atau password salah');
-  }
+          // ✅ LOGIN BERHASIL
+          const token = result.loginResult?.token;
 
-  return;
-}
-
-          const token = result.loginResult.token;
+          if (!token) {
+            alert('Token tidak ditemukan');
+            return;
+          }
 
           localStorage.setItem('token', token);
 
           alert('Login berhasil');
 
-          alert('TOKEN TERSIMPAN: ' + localStorage.getItem('token'));
-
           window.location.hash = '/';
 
         } catch (err) {
-          alert('Error: ' + err.message);
+          alert('Terjadi kesalahan: ' + err.message);
         }
       });
   }
+}
 }
