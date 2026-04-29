@@ -16,11 +16,7 @@ export default class RegisterPresenter {
       const password = document.querySelector('#password').value;
 
       try {
-        window.showLoading?.();
-
         const response = await API.register({ name, email, password });
-
-        window.hideLoading?.();
 
         if (response.error) {
           this._view.showError(response.message);
@@ -31,10 +27,9 @@ export default class RegisterPresenter {
 
         setTimeout(() => {
           window.location.hash = '#/login';
-        }, 1000);
+        }, 1500);
 
       } catch (error) {
-        window.hideLoading?.();
         this._view.showError(error.message);
       }
     });

@@ -1,4 +1,4 @@
-import API from '../../data/api';
+import RegisterPresenter from '../../presenters/register-presenter';
 
 export default class RegisterPage {
   async render() {
@@ -7,6 +7,7 @@ export default class RegisterPage {
         <h1>Register</h1>
 
         <form id="register-form">
+
           <label>Nama</label>
           <input type="text" id="name" required />
 
@@ -14,10 +15,15 @@ export default class RegisterPage {
           <input type="email" id="email" required />
 
           <label>Password</label>
-          <input type="password" id="password" required />
+          <div class="password-wrapper">
+            <input type="password" id="password" required />
+            <button type="button" id="toggle-password">👁</button>
+          </div>
 
           <button type="submit">Register</button>
         </form>
+
+        <p id="status"></p>
 
         <p>Sudah punya akun? <a href="#/login">Login</a></p>
       </section>
@@ -25,23 +31,26 @@ export default class RegisterPage {
   }
 
   async afterRender() {
-    document.querySelector('#register-form')
-      .addEventListener('submit', async (e) => {
-        e.preventDefault();
+    const presenter = new RegisterPresenter({ view: this });
+    presenter.init();
 
-        const name = document.querySelector('#name').value;
-        const email = document.querySelector('#email').value;
-        const password = document.querySelector('#password').value;
+    const toggle = document.querySelector('#toggle-password');
+    const password = document.querySelector('#password');
 
-        try {
-          await API.register({ name, email, password });
+    toggle.addEventListener('click', () => {
+      password.type = password.type === 'password' ? 'text' : 'password';
+    });
+  }
 
-          alert('Register berhasil, silakan login');
+  showSuccess(message) {
+    document.querySelector('#status').innerHTML = `
+      <p style="color:green;">${message}</p>
+    `;
+  }
 
-          window.location.hash = '/login';
-        } catch (err) {
-          alert(err.message);
-        }
-      });
+  showError(message) {
+    document.querySelector('#status').innerHTML = `
+      <p style="color:red;">${message}</p>
+    `;
   }
 }
