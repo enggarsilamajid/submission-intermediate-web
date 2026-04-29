@@ -29,7 +29,6 @@ export default class LoginPresenter {
 
           alert('Login berhasil');
 
-          //_____
           alert('TOKEN TERSIMPAN: ' + localStorage.getItem('token'));
 
           window.location.hash = '/';
