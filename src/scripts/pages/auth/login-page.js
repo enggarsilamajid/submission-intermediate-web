@@ -1,4 +1,4 @@
-import API from '../../data/api';
+import LoginPresenter from '../../presenters/login-presenter';
 
 export default class LoginPage {
   async render() {
@@ -22,24 +22,7 @@ export default class LoginPage {
   }
 
   async afterRender() {
-    document.querySelector('#login-form')
-      .addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const email = document.querySelector('#email').value;
-        const password = document.querySelector('#password').value;
-
-        try {
-          const result = await API.login({ email, password });
-
-          localStorage.setItem('token', result.token);
-
-          alert('Login berhasil');
-
-          window.location.hash = '/';
-        } catch (err) {
-          alert(err.message);
-        }
-      });
+    const presenter = new LoginPresenter({ view: this });
+    presenter.init();
   }
 }
