@@ -5,12 +5,10 @@ export default class HomePage {
     return `
       <section class="home-page">
         <h1>Home</h1>
-
         <div class="map-wrapper">
           <div id="map"></div>
         </div>
-
-        <div id="stories" class="stories-container"></div>
+        <div id="stories"></div>
       </section>
     `;
   }
@@ -24,9 +22,7 @@ export default class HomePage {
     const container = document.querySelector('#stories');
 
     if (!stories || stories.length === 0) {
-      container.innerHTML = `
-        <p style="margin-top:16px;">Tidak ada data</p>
-      `;
+      container.innerHTML = `<p>Tidak ada data</p>`;
       return;
     }
 
@@ -36,12 +32,14 @@ export default class HomePage {
           <article class="story-card">
             <img 
               src="${story.photoUrl}" 
-              alt="Foto dari ${story.name}" 
+              alt="Foto dari ${story.name}"
               loading="lazy"
             />
-
             <div class="story-content">
               <h3>${story.name}</h3>
+              <p class="story-date">
+                ${new Date(story.createdAt).toLocaleDateString('id-ID')}
+              </p>
               <p>${story.description}</p>
             </div>
           </article>
@@ -52,9 +50,7 @@ export default class HomePage {
 
   renderError(message) {
     document.querySelector('#stories').innerHTML = `
-      <p style="color:red; margin-top:16px;">
-        Error: ${message}
-      </p>
+      <p style="color:red;">${message}</p>
     `;
   }
 }

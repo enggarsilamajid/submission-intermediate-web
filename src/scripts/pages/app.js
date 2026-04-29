@@ -17,9 +17,7 @@ class App {
   #setupDrawer() {
     this.#drawerButton.addEventListener('click', (event) => {
       event.stopPropagation();
-
       const isOpen = this.#navigationDrawer.classList.toggle('open');
-
       this.#drawerButton.setAttribute('aria-expanded', isOpen);
     });
 
@@ -32,46 +30,60 @@ class App {
         this.#drawerButton.setAttribute('aria-expanded', false);
       }
     });
-
-    this.#navigationDrawer.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        this.#navigationDrawer.classList.remove('open');
-        this.#drawerButton.setAttribute('aria-expanded', false);
-      });
-    });
-
-    window.addEventListener('hashchange', () => {
-      this.#navigationDrawer.classList.remove('open');
-      this.#drawerButton.setAttribute('aria-expanded', false);
-    });
   }
 
- async renderPage() {
-  const url = getActiveRoute();
-  const page = routes[url];
+  _updateNav() {
+    const token = localStorage.getItem('token');
+    const navList = document.querySelector('#nav-list');
+    if (!navList) return;
 
-  this.#content.classList.remove('fade-in');
-  this.#content.classList.add('fade-out');
+    let html = `
+      <li><a href="#/">Beranda</a></li>
+      <li><a href="#/about">About</a></li>
+    `;
 
-  await new Promise((r) => setTimeout(r, 200));
+    if (token) {
+      html += `
+        <li><a href="#/add">Tambah Data</a></li>
+        <li><a href="#" id="logout-btn">Logout</a></li>
+      `;
+    } else {
+      html += `
+        <li><a href="#/login">Login</a></li>
+        <li><a href="#/register">Register</a></li>
+      `;
+    }
 
-  this.#content.innerHTML = await page.render();
+    navList.innerHTML = html;
 
-  await new Promise((r) => requestAnimationFrame(r));
+    const logoutBtn = document.querySelector('#logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        window.location.hash = '/login';
+      });
+    }
+  }
 
-  await page.afterRender();
+  async renderPage() {
+    const url = getActiveRoute();
+    const page = routes[url];
 
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  });
+    this.#content.classList.remove('fade-in');
+    this.#content.classList.add('fade-out');
 
-  this.#content.classList.remove('fade-out');
-  this.#content.classList.add('fade-in');
+    await new Promise((r) => setTimeout(r, 300));
 
-  this.#content.setAttribute('tabindex', '-1');
-  this.#content.focus();
-}
+    this.#content.innerHTML = await page.render();
+
+    this._updateNav();
+
+    await page.afterRender();
+
+    this.#content.classList.remove('fade-out');
+    this.#content.classList.add('fade-in');
+  }
 }
 
 export default App;

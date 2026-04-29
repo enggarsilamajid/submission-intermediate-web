@@ -17,28 +17,7 @@ export default class LoginPresenter {
           const result = await API.login({ email, password });
 
           if (result.error) {
-            const message = result.message.toLowerCase();
-
-            if (message.includes('not found')) {
-              this._view.showError('Akun belum terdaftar, silakan register');
-
-              setTimeout(() => {
-                window.location.hash = '/register';
-              }, 1500);
-            } 
-            else if (
-              message.includes('password') ||
-              message.includes('unauthorized')
-            ) {
-              this._view.showError('Email atau password salah');
-            } 
-            else if (message.includes('valid email')) {
-              this._view.showError('Format email tidak valid');
-            } 
-            else {
-              this._view.showError(result.message);
-            }
-
+            this._view.showError('Email atau password salah');
             return;
           }
 
@@ -58,7 +37,7 @@ export default class LoginPresenter {
           }, 1000);
 
         } catch (err) {
-          this._view.showError('Terjadi kesalahan: ' + err.message);
+          this._view.showError(err.message);
         }
       });
   }

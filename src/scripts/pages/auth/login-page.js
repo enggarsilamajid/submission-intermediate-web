@@ -9,10 +9,10 @@ export default class LoginPage {
         <p id="auth-message" style="text-align:center; margin-bottom:10px;"></p>
 
         <form id="login-form">
-          <label>Email</label>
+          <label for="email">Email</label>
           <input type="email" id="email" required />
 
-          <label>Password</label>
+          <label for="password">Password</label>
           <div class="password-wrapper">
             <input type="password" id="password" required />
             <button type="button" id="toggle-password">👁</button>

@@ -7,14 +7,13 @@ export default class RegisterPage {
         <h1>Register</h1>
 
         <form id="register-form">
-
-          <label>Nama</label>
+          <label for="name">Nama</label>
           <input type="text" id="name" required />
 
-          <label>Email</label>
+          <label for="email">Email</label>
           <input type="email" id="email" required />
 
-          <label>Password</label>
+          <label for="password">Password</label>
           <div class="password-wrapper">
             <input type="password" id="password" required />
             <button type="button" id="toggle-password">👁</button>
@@ -34,23 +33,21 @@ export default class RegisterPage {
     const presenter = new RegisterPresenter({ view: this });
     presenter.init();
 
-    const toggle = document.querySelector('#toggle-password');
     const password = document.querySelector('#password');
+    const toggle = document.querySelector('#toggle-password');
 
     toggle.addEventListener('click', () => {
       password.type = password.type === 'password' ? 'text' : 'password';
     });
   }
 
-  showSuccess(message) {
-    document.querySelector('#status').innerHTML = `
-      <p style="color:green;">${message}</p>
-    `;
+  showSuccess(msg) {
+    document.querySelector('#status').innerHTML =
+      `<p style="color:green;">${msg}</p>`;
   }
 
-  showError(message) {
-    document.querySelector('#status').innerHTML = `
-      <p style="color:red;">${message}</p>
-    `;
+  showError(msg) {
+    document.querySelector('#status').innerHTML =
+      `<p style="color:red;">${msg}</p>`;
   }
 }
