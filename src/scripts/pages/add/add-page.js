@@ -7,18 +7,15 @@ export default class AddPage {
         <h1>Tambah Data</h1>
 
         <form id="story-form">
-          <!-- DESKRIPSI -->
+
           <label>Deskripsi</label><br/>
           <input id="description" type="text" required /><br/><br/>
 
-          <!-- UPLOAD -->
           <label>Upload Gambar</label><br/>
           <input type="file" id="photo-file" accept="image/*" /><br/><br/>
 
-          <!-- CAMERA BUTTON -->
           <button type="button" id="btn-start-camera">Buka Kamera</button>
 
-          <!-- CAMERA -->
           <div id="camera-section" style="display:none;">
             <video id="camera-preview" autoplay playsinline style="width:100%; max-width:300px;"></video>
 
@@ -28,7 +25,6 @@ export default class AddPage {
             </div>
           </div>
 
-          <!-- PREVIEW -->
           <div id="preview-section" style="display:none;">
             <img id="preview-image" style="width:100%; max-width:300px;" />
             <br/>
@@ -37,7 +33,6 @@ export default class AddPage {
 
           <canvas id="snapshot" style="display:none;"></canvas>
 
-          <!-- MAP -->
           <p>Klik peta untuk memilih lokasi</p>
           <div id="map" style="height:300px;"></div>
           <p id="latlon"></p>

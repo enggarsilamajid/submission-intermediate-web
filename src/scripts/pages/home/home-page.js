@@ -6,12 +6,10 @@ export default class HomePage {
       <section class="home-page">
         <h1>Home</h1>
 
-        <!-- MAP WRAPPER (WAJIB untuk layout stabil) -->
         <div class="map-wrapper">
           <div id="map"></div>
         </div>
 
-        <!-- STORIES -->
         <div id="stories" class="stories-container"></div>
       </section>
     `;

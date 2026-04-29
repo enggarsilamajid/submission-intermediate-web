@@ -6,7 +6,6 @@ export default class LoginPage {
       <section class="auth-form">
         <h1>Login</h1>
 
-        <!-- 🔥 AREA PESAN -->
         <p id="auth-message" style="text-align:center; margin-bottom:10px;"></p>
 
         <form id="login-form">
