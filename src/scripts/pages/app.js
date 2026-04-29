@@ -56,6 +56,13 @@ class App {
 
     navList.innerHTML = html;
 
+    navList.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        this.#navigationDrawer.classList.remove('open');
+        this.#drawerButton.setAttribute('aria-expanded', false);
+      });
+    });
+
     const logoutBtn = document.querySelector('#logout-btn');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', (e) => {
