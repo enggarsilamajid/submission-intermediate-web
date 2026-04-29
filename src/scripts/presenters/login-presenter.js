@@ -10,38 +10,40 @@ export default class LoginPresenter {
       .addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const email = document.querySelector('#email').value;
-        const password = document.querySelector('#password').value;
+        const email = document.querySelector('#email').value.trim();
+        const password = document.querySelector('#password').value.trim();
+
+        // 🔍 DEBUG (HP FRIENDLY)
+        alert('EMAIL: ' + email);
+        alert('PASSWORD: ' + password);
 
         try {
           const result = await API.login({ email, password });
 
-          // 🔍 HANDLE ERROR DARI API
+          // 🔍 DEBUG RESPONSE
+          alert('RESPONSE: ' + JSON.stringify(result));
+
           if (result.error) {
             const message = result.message.toLowerCase();
 
-            // ❌ USER BELUM TERDAFTAR
             if (message.includes('not found')) {
               alert('Akun belum terdaftar, silakan register dulu');
               window.location.hash = '/register';
             } 
-            // ❌ PASSWORD SALAH / UNAUTHORIZED
             else if (
               message.includes('password') ||
               message.includes('unauthorized')
             ) {
               alert('Email atau password salah');
             } 
-            // ❌ FORMAT EMAIL SALAH
             else if (message.includes('valid email')) {
               alert('Format email tidak valid');
             } 
-            // ❌ ERROR LAIN
             else {
               alert('Login gagal: ' + result.message);
             }
 
-            return; // 🔥 WAJIB STOP
+            return;
           }
 
           // ✅ LOGIN BERHASIL

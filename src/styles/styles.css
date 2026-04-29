@@ -312,3 +312,20 @@ section {
 .leaflet-marker-shadow {
   transform: translate3d(0, 0, 0);
 }
+
+/* ===== PASSWORD TOGGLE ===== */
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.password-wrapper input {
+  flex: 1;
+}
+
+.password-wrapper button {
+  width: auto;
+  padding: 8px;
+  cursor: pointer;
+}
