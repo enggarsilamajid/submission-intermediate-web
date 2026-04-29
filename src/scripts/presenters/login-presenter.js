@@ -42,7 +42,6 @@ export default class LoginPresenter {
             return;
           }
 
-          // ✅ LOGIN BERHASIL
           const token = result.loginResult?.token;
 
           if (!token) {

@@ -31,7 +31,6 @@ export default class LoginPage {
     const presenter = new LoginPresenter({ view: this });
     presenter.init();
 
-    // toggle password
     const passwordInput = document.querySelector('#password');
     const toggleBtn = document.querySelector('#toggle-password');
 
@@ -42,14 +41,12 @@ export default class LoginPage {
     });
   }
 
-  // ✅ SUCCESS MESSAGE
   showSuccess(message) {
     const el = document.querySelector('#auth-message');
     el.textContent = message;
     el.style.color = 'green';
   }
 
-  // ❌ ERROR MESSAGE
   showError(message) {
     const el = document.querySelector('#auth-message');
     el.textContent = message;
