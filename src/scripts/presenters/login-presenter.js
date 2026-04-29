@@ -14,24 +14,28 @@ export default class LoginPresenter {
         const password = document.querySelector('#password').value;
 
         try {
-          alert(JSON.stringify(result));
           const result = await API.login({ email, password });
 
+          alert('LOGIN RESPONSE: ' + JSON.stringify(result));
+
           if (result.error) {
-            this._view.showError(result.message);
+            alert('Login gagal: ' + result.message);
             return;
           }
 
-          localStorage.setItem('token', result.loginResult.token);
-          localStorage.setItem('name', result.loginResult.name);
+          const token = result.loginResult.token;
 
-          this._view.showSuccess('Login berhasil');
+          localStorage.setItem('token', token);
+
+          alert('Login berhasil');
+
+          //_____
+          alert('TOKEN TERSIMPAN: ' + localStorage.getItem('token'));
 
           window.location.hash = '/';
-          alert(localStorage.getItem('token'));
 
         } catch (err) {
-          this._view.showError(err.message);
+          alert('Error: ' + err.message);
         }
       });
   }
