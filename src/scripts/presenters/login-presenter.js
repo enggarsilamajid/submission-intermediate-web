@@ -16,12 +16,27 @@ export default class LoginPresenter {
         try {
           const result = await API.login({ email, password });
 
-          alert('LOGIN RESPONSE: ' + JSON.stringify(result));
+// ❌ HAPUS DEBUG
+// alert('LOGIN RESPONSE: ' + JSON.stringify(result));
 
-          if (result.error) {
-            alert('Login gagal: ' + result.message);
-            return;
-          }
+if (result.error) {
+
+  const message = result.message.toLowerCase();
+
+  // 🔥 HANDLE SEMUA ERROR LOGIN
+  if (
+    message.includes('not found') ||
+    message.includes('user') ||
+    message.includes('email')
+  ) {
+    alert('Silakan register dulu');
+    window.location.hash = '/register';
+  } else {
+    alert('Email atau password salah');
+  }
+
+  return;
+}
 
           const token = result.loginResult.token;
 
