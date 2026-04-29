@@ -13,34 +13,30 @@ export default class LoginPresenter {
         const email = document.querySelector('#email').value.trim();
         const password = document.querySelector('#password').value.trim();
 
-        // 🔍 DEBUG (HP FRIENDLY)
-        alert('EMAIL: ' + email);
-        alert('PASSWORD: ' + password);
-
         try {
           const result = await API.login({ email, password });
-
-          // 🔍 DEBUG RESPONSE
-          alert('RESPONSE: ' + JSON.stringify(result));
 
           if (result.error) {
             const message = result.message.toLowerCase();
 
             if (message.includes('not found')) {
-              alert('Akun belum terdaftar, silakan register dulu');
-              window.location.hash = '/register';
+              this._view.showError('Akun belum terdaftar, silakan register');
+
+              setTimeout(() => {
+                window.location.hash = '/register';
+              }, 1500);
             } 
             else if (
               message.includes('password') ||
               message.includes('unauthorized')
             ) {
-              alert('Email atau password salah');
+              this._view.showError('Email atau password salah');
             } 
             else if (message.includes('valid email')) {
-              alert('Format email tidak valid');
+              this._view.showError('Format email tidak valid');
             } 
             else {
-              alert('Login gagal: ' + result.message);
+              this._view.showError(result.message);
             }
 
             return;
@@ -50,18 +46,20 @@ export default class LoginPresenter {
           const token = result.loginResult?.token;
 
           if (!token) {
-            alert('Token tidak ditemukan');
+            this._view.showError('Token tidak ditemukan');
             return;
           }
 
           localStorage.setItem('token', token);
 
-          alert('Login berhasil');
+          this._view.showSuccess('Login berhasil');
 
-          window.location.hash = '/';
+          setTimeout(() => {
+            window.location.hash = '/';
+          }, 1000);
 
         } catch (err) {
-          alert('Terjadi kesalahan: ' + err.message);
+          this._view.showError('Terjadi kesalahan: ' + err.message);
         }
       });
   }

@@ -21,8 +21,6 @@ export default class HomePresenter {
 
       const stories = response.listStory || [];
 
-      alert('JUMLAH DATA: ' + stories.length);
-
       this._view.renderStories(stories);
 
       this._initMap();

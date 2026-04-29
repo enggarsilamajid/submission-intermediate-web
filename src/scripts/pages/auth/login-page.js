@@ -6,6 +6,9 @@ export default class LoginPage {
       <section class="auth-form">
         <h1>Login</h1>
 
+        <!-- 🔥 AREA PESAN -->
+        <p id="auth-message" style="text-align:center; margin-bottom:10px;"></p>
+
         <form id="login-form">
           <label>Email</label>
           <input type="email" id="email" required />
@@ -25,19 +28,31 @@ export default class LoginPage {
   }
 
   async afterRender() {
-    // 🔥 INIT PRESENTER
     const presenter = new LoginPresenter({ view: this });
     presenter.init();
 
-    // 🔥 TOGGLE PASSWORD
+    // toggle password
     const passwordInput = document.querySelector('#password');
     const toggleBtn = document.querySelector('#toggle-password');
 
     toggleBtn.addEventListener('click', () => {
       const isPassword = passwordInput.type === 'password';
-
       passwordInput.type = isPassword ? 'text' : 'password';
       toggleBtn.textContent = isPassword ? '🙈' : '👁';
     });
+  }
+
+  // ✅ SUCCESS MESSAGE
+  showSuccess(message) {
+    const el = document.querySelector('#auth-message');
+    el.textContent = message;
+    el.style.color = 'green';
+  }
+
+  // ❌ ERROR MESSAGE
+  showError(message) {
+    const el = document.querySelector('#auth-message');
+    el.textContent = message;
+    el.style.color = 'red';
   }
 }
