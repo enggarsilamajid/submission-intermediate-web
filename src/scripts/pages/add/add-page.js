@@ -15,22 +15,24 @@ export default class AddPage {
           <label for="photo-file">Upload Gambar</label>
           <input type="file" id="photo-file" accept="image/*" />
 
-          <button type="button" id="btn-start-camera">Buka Kamera</button>
-          <button type="button" id="btn-stop-camera">Tutup Kamera</button>
+<button type="button" id="btn-start-camera">Buka Kamera</button>
+<button type="button" id="btn-stop-camera" style="display:none;">Tutup Kamera</button>
 
-          <div id="camera-section" style="display:none;">
-            <video id="camera-preview" autoplay playsinline></video>
+<div id="camera-section" style="display:none;">
+  <video id="camera-preview" autoplay playsinline style="width:100%; max-width:300px;"></video>
 
-            <div>
-              <button type="button" id="btn-capture">Ambil Gambar</button>
-              <button type="button" id="btn-switch">Ganti Kamera</button>
-            </div>
-          </div>
+  <div>
+    <button type="button" id="btn-capture">Ambil Gambar</button>
+    <button type="button" id="btn-switch">Ganti Kamera</button>
+  </div>
+</div>
 
-          <div id="preview-section" style="display:none;">
-            <img id="preview-image" alt="Preview hasil foto" />
-            <button type="button" id="btn-retake">Ambil Ulang</button>
-          </div>
+<div id="preview-section" style="display:none;">
+  <img id="preview-image" style="width:100%; max-width:300px;" alt="Preview gambar"/>
+  <br/>
+  <button type="button" id="btn-retake">Ambil Ulang</button>
+  <button type="button" id="btn-delete">Hapus Foto</button>
+</div>
 
           <canvas id="snapshot" style="display:none;"></canvas>
 

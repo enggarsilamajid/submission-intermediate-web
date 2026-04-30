@@ -47,6 +47,8 @@ export default class HomePage {
   }
 
   renderError(message) {
-    document.querySelector('#stories').innerHTML = `<p>${message}</p>`;
-  }
+  document.querySelector('#stories').innerHTML = `
+    <p style="text-align:center; margin-top:20px;">${message}</p>
+  `;
+}
 }

@@ -16,23 +16,31 @@ export default class HomePresenter {
   }
 
   async init() {
-    try {
-      const response = await API.getStories();
-      const stories = response.listStory || [];
+  const token = localStorage.getItem('token');
 
-      this._view.renderStories(stories);
-
-      this._initMap();
-      this._addMarkers(stories);
-
-      setTimeout(() => {
-        this._map.invalidateSize();
-      }, 300);
-
-    } catch (error) {
-      this._view.renderError(error.message);
-    }
+  if (!token) {
+    this._view.renderError('Silahkan login untuk melihat dan berbagi cerita');
+    this._initMap();
+    return;
   }
+
+  try {
+    const response = await API.getStories();
+    const stories = response.listStory || [];
+
+    this._view.renderStories(stories);
+
+    this._initMap();
+    this._addMarkers(stories);
+
+    setTimeout(() => {
+      this._map.invalidateSize();
+    }, 300);
+
+  } catch (error) {
+    this._view.renderError(error.message);
+  }
+}
 
   _initMap() {
     this._map = L.map('map', {
@@ -67,16 +75,34 @@ export default class HomePresenter {
   }
 
   _addMarkers(stories) {
-    stories.forEach((story) => {
-      if (story.lat && story.lon) {
-        L.marker([story.lat, story.lon])
-          .addTo(this._map)
-          .bindPopup(`
-            <b>${story.name}</b><br/>
-            <small>${new Date(story.createdAt).toLocaleDateString('id-ID')}</small><br/>
-            ${story.description}
-          `);
-      }
-    });
-  }
+  let activeMarker = null;
+
+  stories.forEach((story) => {
+    if (story.lat && story.lon) {
+      const marker = L.marker([story.lat, story.lon]).addTo(this._map);
+
+      marker.on('click', () => {
+        if (activeMarker) {
+          activeMarker.setOpacity(1);
+        }
+
+        marker.setOpacity(0.5);
+        activeMarker = marker;
+
+        marker.bindPopup(`
+          <b>${story.name}</b><br/>
+          <small>${new Date(story.createdAt).toLocaleDateString('id-ID')}</small><br/>
+          ${story.description}
+        `).openPopup();
+      });
+    }
+  });
+
+  this._map.on('click', () => {
+    if (activeMarker) {
+      activeMarker.setOpacity(1);
+      activeMarker = null;
+    }
+  });
+}
 }

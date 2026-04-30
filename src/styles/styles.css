@@ -10,6 +10,12 @@ body {
   color: #222;
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: ease;
+}
+
 :root {
   --nav-height: 70px;
 }

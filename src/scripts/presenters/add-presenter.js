@@ -77,6 +77,41 @@ export default class AddPresenter {
         this._capturedBlob = null;
         await this._startCamera();
       });
+
+    const btnStart = document.querySelector('#btn-start-camera');
+const btnStop = document.querySelector('#btn-stop-camera');
+const fileInput = document.querySelector('#photo-file');
+
+btnStart.addEventListener('click', async () => {
+  await this._startCamera();
+  btnStart.style.display = 'none';
+  btnStop.style.display = 'block';
+  fileInput.disabled = true;
+});
+
+btnStop.addEventListener('click', () => {
+  this._stopCamera();
+  btnStart.style.display = 'block';
+  btnStop.style.display = 'none';
+  fileInput.disabled = false;
+});
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length > 0) {
+    btnStart.disabled = true;
+  } else {
+    btnStart.disabled = false;
+  }
+});
+
+document.querySelector('#btn-delete')
+  .addEventListener('click', () => {
+    this._capturedBlob = null;
+    fileInput.value = '';
+    btnStart.disabled = false;
+
+    document.querySelector('#preview-section').style.display = 'none';
+  });
   }
 
   async _startCamera() {
@@ -90,12 +125,16 @@ export default class AddPresenter {
   }
 
   _stopCamera() {
-    if (this._stream) {
-      this._stream.getTracks().forEach((t) => t.stop());
-      this._stream = null;
-    }
-    this._view.hideCamera();
+  if (this._stream) {
+    this._stream.getTracks().forEach((t) => t.stop());
+    this._stream = null;
   }
+
+  this._view.hideCamera();
+
+  document.querySelector('#btn-start-camera').style.display = 'block';
+  document.querySelector('#btn-stop-camera').style.display = 'none';
+}
 
   async _takePhoto() {
     const video = document.querySelector('#camera-preview');
