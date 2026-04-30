@@ -10,7 +10,6 @@ class App {
     this.#content = content;
     this.#drawerButton = drawerButton;
     this.#navigationDrawer = navigationDrawer;
-
     this.#setupDrawer();
   }
 
@@ -77,19 +76,20 @@ class App {
     const url = getActiveRoute();
     const page = routes[url];
 
-    this.#content.classList.remove('fade-in');
-    this.#content.classList.add('fade-out');
+    const render = async () => {
+      this.#content.innerHTML = await page.render();
+      this._updateNav();
+      await page.afterRender();
+    };
 
-    await new Promise((r) => setTimeout(r, 300));
+    if (document.startViewTransition) {
+      await document.startViewTransition(render);
+    } else {
+      await render();
+    }
 
-    this.#content.innerHTML = await page.render();
-
-    this._updateNav();
-
-    await page.afterRender();
-
-    this.#content.classList.remove('fade-out');
-    this.#content.classList.add('fade-in');
+    this.#content.setAttribute('tabindex', '-1');
+    this.#content.focus();
   }
 }
 

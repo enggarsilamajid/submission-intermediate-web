@@ -6,6 +6,8 @@ export default class RegisterPage {
       <section class="auth-form">
         <h1>Register</h1>
 
+        <h2>Form Register</h2>
+
         <form id="register-form">
           <label for="name">Nama</label>
           <input type="text" id="name" required />
@@ -42,12 +44,10 @@ export default class RegisterPage {
   }
 
   showSuccess(msg) {
-    document.querySelector('#status').innerHTML =
-      `<p style="color:green;">${msg}</p>`;
+    document.querySelector('#status').innerHTML = `<p style="color:green;">${msg}</p>`;
   }
 
   showError(msg) {
-    document.querySelector('#status').innerHTML =
-      `<p style="color:red;">${msg}</p>`;
+    document.querySelector('#status').innerHTML = `<p style="color:red;">${msg}</p>`;
   }
 }

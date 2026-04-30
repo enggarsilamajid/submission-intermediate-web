@@ -4,12 +4,10 @@ import L from 'leaflet';
 export default class AddPresenter {
   constructor({ view }) {
     this._view = view;
-
     this._map = null;
     this._selectedMarker = null;
     this._selectedLat = null;
     this._selectedLon = null;
-
     this._stream = null;
     this._facingMode = 'environment';
     this._capturedBlob = null;
@@ -17,7 +15,6 @@ export default class AddPresenter {
 
   async init() {
     if (!localStorage.getItem('token')) {
-      alert('Harus login dulu');
       window.location.hash = '/login';
       return;
     }
@@ -27,14 +24,10 @@ export default class AddPresenter {
     this._initForm();
   }
 
-
   _initMap() {
     this._map = L.map('map').setView([-6.2, 106.8], 10);
 
-    L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      { attribution: '&copy; OpenStreetMap contributors' }
-    ).addTo(this._map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this._map);
 
     this._map.on('click', (e) => {
       const { lat, lng } = e.latlng;
@@ -58,11 +51,15 @@ export default class AddPresenter {
         await this._startCamera();
       });
 
+    document.querySelector('#btn-stop-camera')
+      .addEventListener('click', () => {
+        this._stopCamera();
+      });
+
     document.querySelector('#btn-switch')
       .addEventListener('click', async () => {
         this._facingMode =
           this._facingMode === 'environment' ? 'user' : 'environment';
-
         await this._startCamera();
       });
 
@@ -70,10 +67,8 @@ export default class AddPresenter {
       .addEventListener('click', async () => {
         const blob = await this._takePhoto();
         this._capturedBlob = blob;
-
         const imageUrl = URL.createObjectURL(blob);
         this._view.showPreview(imageUrl);
-
         this._stopCamera();
       });
 
@@ -99,7 +94,6 @@ export default class AddPresenter {
       this._stream.getTracks().forEach((t) => t.stop());
       this._stream = null;
     }
-
     this._view.hideCamera();
   }
 
@@ -118,40 +112,6 @@ export default class AddPresenter {
     });
   }
 
-  async _compressImage(file) {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        img.src = e.target.result;
-      };
-
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-
-        const MAX_WIDTH = 800;
-        const scale = MAX_WIDTH / img.width;
-
-        canvas.width = MAX_WIDTH;
-        canvas.height = img.height * scale;
-
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        canvas.toBlob(
-          (blob) => {
-            resolve(blob);
-          },
-          'image/jpeg',
-          0.7
-        );
-      };
-
-      reader.readAsDataURL(file);
-    });
-  }
-
   _initForm() {
     document.querySelector('#story-form')
       .addEventListener('submit', async (e) => {
@@ -162,48 +122,29 @@ export default class AddPresenter {
 
         let photo = fileInput.files[0] || this._capturedBlob;
 
-        if (!photo) {
-          alert('Upload atau ambil gambar dulu');
+        if (!photo || !this._selectedLat || !this._selectedLon) {
+          this._view.showError('Lengkapi data');
           return;
         }
 
-        if (!this._selectedLat || !this._selectedLon) {
-          alert('Pilih lokasi di peta');
+        const formData = new FormData();
+        formData.append('description', description);
+        formData.append('photo', photo);
+        formData.append('lat', this._selectedLat);
+        formData.append('lon', this._selectedLon);
+
+        const result = await API.addStory(formData);
+
+        if (result.error) {
+          this._view.showError(result.message);
           return;
         }
 
-        photo = await this._compressImage(photo);
+        this._view.showSuccess('Berhasil tambah data');
 
-        console.log('SIZE (KB):', photo.size / 1024);
-
-        await this._submitData({
-          description,
-          photo,
-        });
+        setTimeout(() => {
+          window.location.hash = '/';
+        }, 1000);
       });
   }
-
-  async _submitData({ description, photo }) {
-  try {
-    const formData = new FormData();
-    formData.append('description', description);
-    formData.append('photo', photo);
-    formData.append('lat', this._selectedLat);
-    formData.append('lon', this._selectedLon);
-
-    const result = await API.addStory(formData);
-
-    if (result.error) {
-      alert('Gagal: ' + result.message);
-      return;
-    }
-
-    alert('Berhasil tambah data');
-
-    window.location.hash = '/';
-
-  } catch (err) {
-    alert('Gagal kirim data');
-  }
-}
 }

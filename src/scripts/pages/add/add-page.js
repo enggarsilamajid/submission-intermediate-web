@@ -6,18 +6,20 @@ export default class AddPage {
       <section class="container">
         <h1>Tambah Data</h1>
 
+        <h2>Form Tambah Cerita</h2>
+
         <form id="story-form">
+          <label for="description">Deskripsi</label>
+          <input id="description" type="text" required />
 
-          <label>Deskripsi</label><br/>
-          <input id="description" type="text" required /><br/><br/>
-
-          <label>Upload Gambar</label><br/>
-          <input type="file" id="photo-file" accept="image/*" /><br/><br/>
+          <label for="photo-file">Upload Gambar</label>
+          <input type="file" id="photo-file" accept="image/*" />
 
           <button type="button" id="btn-start-camera">Buka Kamera</button>
+          <button type="button" id="btn-stop-camera">Tutup Kamera</button>
 
           <div id="camera-section" style="display:none;">
-            <video id="camera-preview" autoplay playsinline style="width:100%; max-width:300px;"></video>
+            <video id="camera-preview" autoplay playsinline></video>
 
             <div>
               <button type="button" id="btn-capture">Ambil Gambar</button>
@@ -26,19 +28,17 @@ export default class AddPage {
           </div>
 
           <div id="preview-section" style="display:none;">
-            <img id="preview-image" style="width:100%; max-width:300px;" />
-            <br/>
+            <img id="preview-image" alt="Preview hasil foto" />
             <button type="button" id="btn-retake">Ambil Ulang</button>
           </div>
 
           <canvas id="snapshot" style="display:none;"></canvas>
 
           <p>Klik peta untuk memilih lokasi</p>
-          <div id="map" style="height:300px;"></div>
+          <div id="map"></div>
           <p id="latlon"></p>
 
-          <br/>
-          <button id="submit-btn" type="submit">Kirim</button>
+          <button type="submit">Kirim</button>
 
           <p id="status"></p>
         </form>
@@ -52,14 +52,12 @@ export default class AddPage {
   }
 
   updateLatLon(lat, lon) {
-    document.querySelector('#latlon').innerText =
-      `Lat: ${lat}, Lon: ${lon}`;
+    document.querySelector('#latlon').innerText = `Lat: ${lat}, Lon: ${lon}`;
   }
 
   showCamera(stream) {
     const video = document.querySelector('#camera-preview');
     video.srcObject = stream;
-
     document.querySelector('#camera-section').style.display = 'block';
     document.querySelector('#preview-section').style.display = 'none';
   }
@@ -67,7 +65,6 @@ export default class AddPage {
   showPreview(imageUrl) {
     const img = document.querySelector('#preview-image');
     img.src = imageUrl;
-
     document.querySelector('#camera-section').style.display = 'none';
     document.querySelector('#preview-section').style.display = 'block';
   }
@@ -81,6 +78,6 @@ export default class AddPage {
   }
 
   showError(message) {
-    document.querySelector('#status').innerText = `Error: ${message}`;
+    document.querySelector('#status').innerText = message;
   }
 }

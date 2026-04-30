@@ -6,7 +6,8 @@ export default class LoginPage {
       <section class="auth-form">
         <h1>Login</h1>
 
-        <p id="auth-message" style="text-align:center; margin-bottom:10px;"></p>
+        <h2>Form Login</h2>
+        <p id="auth-message"></p>
 
         <form id="login-form">
           <label for="email">Email</label>

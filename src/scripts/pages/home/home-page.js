@@ -5,9 +5,13 @@ export default class HomePage {
     return `
       <section class="home-page">
         <h1>Home</h1>
+
+        <h2>Peta Lokasi</h2>
         <div class="map-wrapper">
           <div id="map"></div>
         </div>
+
+        <h2>Daftar Cerita</h2>
         <div id="stories"></div>
       </section>
     `;
@@ -30,16 +34,10 @@ export default class HomePage {
       <div class="story-list">
         ${stories.map((story) => `
           <article class="story-card">
-            <img 
-              src="${story.photoUrl}" 
-              alt="Foto dari ${story.name}"
-              loading="lazy"
-            />
+            <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}" loading="lazy" />
             <div class="story-content">
               <h3>${story.name}</h3>
-              <p class="story-date">
-                ${new Date(story.createdAt).toLocaleDateString('id-ID')}
-              </p>
+              <p>${new Date(story.createdAt).toLocaleDateString('id-ID')}</p>
               <p>${story.description}</p>
             </div>
           </article>
@@ -49,8 +47,6 @@ export default class HomePage {
   }
 
   renderError(message) {
-    document.querySelector('#stories').innerHTML = `
-      <p style="color:red;">${message}</p>
-    `;
+    document.querySelector('#stories').innerHTML = `<p>${message}</p>`;
   }
 }
