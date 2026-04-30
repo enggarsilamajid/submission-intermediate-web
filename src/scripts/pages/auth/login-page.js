@@ -6,7 +6,7 @@ export default class LoginPage {
       <section class="auth-form">
         <h1>Login</h1>
 
-        <h2>Form Login</h2>
+        <!-- <h2>Form Login</h2> -->
         <p id="auth-message"></p>
 
         <form id="login-form">
