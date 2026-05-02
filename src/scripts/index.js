@@ -20,23 +20,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const reg = await navigator.serviceWorker.register('/service-worker.js');
-
-      if (reg.waiting) {
-        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-      }
-
-      await navigator.serviceWorker.ready;
-
+      await navigator.serviceWorker.register('/service-worker.js');
     } catch (e) {
       alert('SW ERROR: ' + e.message);
     }
   });
 }
 
+async function getRegistration() {
+  let reg = await navigator.serviceWorker.getRegistration();
+  if (reg) return reg;
+
+  await new Promise((r) => setTimeout(r, 1000));
+  reg = await navigator.serviceWorker.getRegistration();
+
+  return reg;
+}
+
 window.getPushSubscription = async function () {
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await getRegistration();
+    if (!reg) return null;
+
     return await reg.pushManager.getSubscription();
   } catch {
     return null;
@@ -45,7 +50,11 @@ window.getPushSubscription = async function () {
 
 window.subscribePush = async function () {
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await getRegistration();
+    if (!reg) {
+      alert('Service Worker belum siap');
+      return null;
+    }
 
     const existing = await reg.pushManager.getSubscription();
     if (existing) return existing;
@@ -79,7 +88,9 @@ window.subscribePush = async function () {
 
 window.unsubscribePush = async function () {
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await getRegistration();
+    if (!reg) return;
+
     const sub = await reg.pushManager.getSubscription();
     if (!sub) return;
 
