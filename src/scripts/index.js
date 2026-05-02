@@ -56,7 +56,7 @@ window.subscribePush = async function () {
       return null;
     }
 
-    const vapidPublicKey = 'ISI_VAPID_KEY_DISINI';
+    const vapidPublicKey = 'BEl62iUYgUivh9z8m0vG0pN7qk1m6v0ZC4m9o6K5R9lF0n1rF2Q3pW8sV5bY7xT8k2zM3aB4cD5eF6gH7iJ8kL';
 
     if (!vapidPublicKey || vapidPublicKey.includes('ISI')) {
       alert('VAPID key belum diisi');
