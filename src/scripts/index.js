@@ -23,12 +23,14 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('/service-worker.js');
-
       await navigator.serviceWorker.ready;
-
       swRegistration = reg;
-
       alert('SW siap digunakan');
+
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
+
     } catch (e) {
       alert('SW gagal: ' + e.message);
     }
@@ -42,8 +44,8 @@ window.getPushSubscription = async function () {
 
 window.subscribePush = async function () {
   try {
-    if (!swRegistration || !navigator.serviceWorker.controller) {
-      alert('Service Worker belum aktif');
+    if (!swRegistration) {
+      alert('SW belum siap');
       return null;
     }
 
