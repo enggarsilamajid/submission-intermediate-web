@@ -93,7 +93,6 @@ class App {
             await window.unsubscribePush();
           } else {
             const result = await window.subscribePush();
-
             if (!result) {
               btn.innerText = 'Aktifkan Notifikasi';
               btn.disabled = false;
@@ -101,8 +100,7 @@ class App {
             }
           }
 
-          const newSub = await window.getPushSubscription();
-          btn.innerText = newSub ? 'Nonaktifkan Notifikasi' : 'Aktifkan Notifikasi';
+          await updateButton();
 
         } catch (e) {
           alert('Gagal: ' + e.message);
