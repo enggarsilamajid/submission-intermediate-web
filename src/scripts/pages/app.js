@@ -76,12 +76,8 @@ class App {
 
     if (btn) {
       const updateButton = async () => {
-        try {
-          const sub = await window.getPushSubscription();
-          btn.innerText = sub ? 'Nonaktifkan Notifikasi' : 'Aktifkan Notifikasi';
-        } catch {
-          btn.innerText = 'Aktifkan Notifikasi';
-        }
+        const sub = await window.getPushSubscription();
+        btn.innerText = sub ? 'Nonaktifkan Notifikasi' : 'Aktifkan Notifikasi';
       };
 
       updateButton();
@@ -90,26 +86,20 @@ class App {
         btn.disabled = true;
         btn.innerText = 'Memproses...';
 
-        try {
-          const sub = await window.getPushSubscription();
+        const sub = await window.getPushSubscription();
 
-          if (sub) {
-            await window.unsubscribePush();
-          } else {
-            const result = await window.subscribePush();
-            if (!result) {
-              btn.innerText = 'Aktifkan Notifikasi';
-              btn.disabled = false;
-              return;
-            }
+        if (sub) {
+          await window.unsubscribePush();
+        } else {
+          const result = await window.subscribePush();
+          if (!result) {
+            btn.innerText = 'Aktifkan Notifikasi';
+            btn.disabled = false;
+            return;
           }
-
-          await updateButton();
-        } catch (e) {
-          alert('Gagal: ' + e.message);
-          btn.innerText = 'Aktifkan Notifikasi';
         }
 
+        await updateButton();
         btn.disabled = false;
       });
     }
