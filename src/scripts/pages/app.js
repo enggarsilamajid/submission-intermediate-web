@@ -43,6 +43,7 @@ class App {
 
     if (token) {
       html += `
+        <li><button id="btn-subscribe">Aktifkan Notifikasi</button></li>
         <li><a href="#/add">Tambah Data</a></li>
         <li><a href="#" id="logout-btn">Logout</a></li>
       `;
@@ -68,6 +69,15 @@ class App {
         e.preventDefault();
         localStorage.removeItem('token');
         window.location.hash = '/login';
+      });
+    }
+
+    const btn = document.querySelector('#btn-subscribe');
+    if (btn) {
+      btn.addEventListener('click', async () => {
+        await subscribePush();
+        btn.innerText = 'Notifikasi Aktif';
+        btn.disabled = true;
       });
     }
   }

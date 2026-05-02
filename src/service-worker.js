@@ -40,23 +40,19 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  let data = {
-    title: 'Story Baru',
-    options: {
-      body: 'Ada cerita baru ditambahkan',
-      icon: '/images/logo.png',
-    },
+  const data = event.data.json();
+
+  const title = data.title || 'Story Baru';
+  const options = {
+    body: data.body || 'Ada cerita baru',
+    icon: '/images/logo.png',
+    data: {
+      url: '/#/'
+    }
   };
 
-  if (event.data) {
-    const json = event.data.json();
-
-    data.title = json.title || data.title;
-    data.options.body = json.body || data.options.body;
-  }
-
   event.waitUntil(
-    self.registration.showNotification(data.title, data.options)
+    self.registration.showNotification(title, options)
   );
 });
 
@@ -64,6 +60,6 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   event.waitUntil(
-    clients.openWindow('/#/')
+    clients.openWindow(event.notification.data.url)
   );
 });
