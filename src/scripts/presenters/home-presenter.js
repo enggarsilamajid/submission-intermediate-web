@@ -21,6 +21,12 @@ export default class HomePresenter {
   if (!token) {
     this._view.renderError('Silahkan login untuk melihat dan berbagi cerita');
     this._initMap();
+
+    L.popup()
+      .setLatLng([-2.5, 118])
+      .setContent('Login untuk melihat lokasi cerita')
+      .openOn(this._map);
+      
     return;
   }
 
@@ -78,7 +84,7 @@ export default class HomePresenter {
   let activeMarker = null;
 
   stories.forEach((story) => {
-    if (story.lat && story.lon) {
+    if (story.lat !== undefined && story.lon !== undefined) {
       const marker = L.marker([story.lat, story.lon]).addTo(this._map);
 
       marker.on('click', () => {
