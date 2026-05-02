@@ -43,7 +43,7 @@ class App {
 
     if (token) {
       html += `
-        <li><button id="btn-subscribe">...</button></li>
+        <li><button id="btn-subscribe">Memuat...</button></li>
         <li><a href="#/add">Tambah Data</a></li>
         <li><a href="#" id="logout-btn">Logout</a></li>
       `;
@@ -76,8 +76,12 @@ class App {
 
     if (btn) {
       const updateButton = async () => {
-        const sub = await window.getPushSubscription();
-        btn.innerText = sub ? 'Nonaktifkan Notifikasi' : 'Aktifkan Notifikasi';
+        try {
+          const sub = await window.getPushSubscription();
+          btn.innerText = sub ? 'Nonaktifkan Notifikasi' : 'Aktifkan Notifikasi';
+        } catch {
+          btn.innerText = 'Aktifkan Notifikasi';
+        }
       };
 
       updateButton();
@@ -101,7 +105,6 @@ class App {
           }
 
           await updateButton();
-
         } catch (e) {
           alert('Gagal: ' + e.message);
           btn.innerText = 'Aktifkan Notifikasi';
