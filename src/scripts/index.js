@@ -20,8 +20,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      await navigator.serviceWorker.register('./service-worker.js');
+      const reg = await navigator.serviceWorker.register('/service-worker.js');
+
+      if (reg.waiting) {
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+
       await navigator.serviceWorker.ready;
+
     } catch (e) {
       alert('SW ERROR: ' + e.message);
     }
