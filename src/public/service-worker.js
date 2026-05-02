@@ -1,4 +1,4 @@
-const CACHE_NAME = 'storyapp-v1';
+const CACHE_NAME = 'storyapp-v2';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -9,9 +9,7 @@ const APP_SHELL = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_SHELL);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
   );
   self.skipWaiting();
 });
@@ -33,9 +31,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+    caches.match(event.request).then((res) => res || fetch(event.request))
   );
 });
 
@@ -59,7 +55,21 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
+  const url = event.notification.data?.url || '/#/';
+
   event.waitUntil(
-    clients.openWindow(event.notification.data.url)
+    clients.matchAll({ type: 'window' }).then((clientsArr) => {
+      const hadWindow = clientsArr.some((client) => {
+        if (client.url.includes(url)) {
+          client.focus();
+          return true;
+        }
+        return false;
+      });
+
+      if (!hadWindow) {
+        clients.openWindow(url);
+      }
+    })
   );
 });

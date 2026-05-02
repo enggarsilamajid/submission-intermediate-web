@@ -43,9 +43,9 @@ class App {
 
     if (token) {
       html += `
+        <li><button id="btn-subscribe">...</button></li>
         <li><a href="#/add">Tambah Data</a></li>
         <li><a href="#" id="logout-btn">Logout</a></li>
-        <li><button id="btn-subscribe">Aktifkan Notifikasi</button></li>
       `;
     } else {
       html += `
@@ -74,11 +74,24 @@ class App {
 
     const btn = document.querySelector('#btn-subscribe');
     if (btn) {
+      window.getPushSubscription().then((sub) => {
+        if (sub) {
+          btn.innerText = 'Nonaktifkan Notifikasi';
+        } else {
+          btn.innerText = 'Aktifkan Notifikasi';
+        }
+      });
+
       btn.addEventListener('click', async () => {
-        alert('button clicked');
-        await window.subscribePush();
-        btn.innerText = 'Notifikasi Aktif';
-        btn.disabled = true;
+        const sub = await window.getPushSubscription();
+
+        if (sub) {
+          await window.unsubscribePush();
+          btn.innerText = 'Aktifkan Notifikasi';
+        } else {
+          await window.subscribePush();
+          btn.innerText = 'Nonaktifkan Notifikasi';
+        }
       });
     }
   }

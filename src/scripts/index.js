@@ -30,19 +30,18 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-window.subscribePush = async function () {
-  alert('klik tombol');
+window.getPushSubscription = async function () {
+  if (!swRegistration) return null;
+  return await swRegistration.pushManager.getSubscription();
+};
 
+window.subscribePush = async function () {
   if (!swRegistration) {
     alert('SW belum siap');
     return;
   }
 
-  alert('service worker ready');
-
   const permission = await Notification.requestPermission();
-  alert('permission: ' + permission);
-
   if (permission !== 'granted') {
     alert('izin ditolak');
     return;
@@ -56,8 +55,6 @@ window.subscribePush = async function () {
     applicationServerKey: convertedKey,
   });
 
-  alert('berhasil subscribe');
-
   await fetch('https://story-api.dicoding.dev/v1/notifications/subscribe', {
     method: 'POST',
     headers: {
@@ -67,7 +64,24 @@ window.subscribePush = async function () {
     body: JSON.stringify(subscription),
   });
 
-  alert('terkirim ke server');
+  alert('Notifikasi aktif');
+};
+
+window.unsubscribePush = async function () {
+  const sub = await window.getPushSubscription();
+  if (!sub) return;
+
+  await fetch('https://story-api.dicoding.dev/v1/notifications/subscribe', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    body: JSON.stringify(sub),
+  });
+
+  await sub.unsubscribe();
+  alert('Notifikasi dimatikan');
 };
 
 function urlBase64ToUint8Array(base64String) {
