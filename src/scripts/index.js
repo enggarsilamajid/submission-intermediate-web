@@ -27,12 +27,27 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+async function waitForSW() {
+  if (navigator.serviceWorker.controller) return;
+
+  await new Promise((resolve) => {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      resolve();
+    });
+  });
+}
+
 async function getRegistration() {
   let reg = await navigator.serviceWorker.getRegistration();
-  if (reg) return reg;
 
-  await new Promise((r) => setTimeout(r, 1000));
-  reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) {
+    await new Promise((r) => setTimeout(r, 1000));
+    reg = await navigator.serviceWorker.getRegistration();
+  }
+
+  if (!navigator.serviceWorker.controller) {
+    await waitForSW();
+  }
 
   return reg;
 }
