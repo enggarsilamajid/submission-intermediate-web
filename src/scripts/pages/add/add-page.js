@@ -10,10 +10,10 @@ export default class AddPage {
 
         <form id="story-form">
           <label for="description">Deskripsi</label>
-          <input id="description" type="text" required />
+          <input id="description" name="description" type="text" required />
 
           <label for="photo-file">Upload Gambar</label>
-          <input type="file" id="photo-file" accept="image/*" />
+          <input type="file" id="photo-file" accept="image/*" name="photo" />
 
 <button type="button" id="btn-start-camera">Buka Kamera</button>
 <button type="button" id="btn-stop-camera" style="display:none;">Tutup Kamera</button>

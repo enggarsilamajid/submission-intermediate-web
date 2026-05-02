@@ -46,11 +46,6 @@ export default class AddPresenter {
   }
 
   _initCamera() {
-    document.querySelector('#btn-start-camera')
-      .addEventListener('click', async () => {
-        await this._startCamera();
-      });
-
     document.querySelector('#btn-stop-camera')
       .addEventListener('click', () => {
         this._stopCamera();
@@ -79,8 +74,8 @@ export default class AddPresenter {
       });
 
     const btnStart = document.querySelector('#btn-start-camera');
-const btnStop = document.querySelector('#btn-stop-camera');
-const fileInput = document.querySelector('#photo-file');
+    const btnStop = document.querySelector('#btn-stop-camera');
+    const fileInput = document.querySelector('#photo-file');
 
 btnStart.addEventListener('click', async () => {
   await this._startCamera();
@@ -156,12 +151,14 @@ document.querySelector('#btn-delete')
       .addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        this._view.showSuccess('Mengirim data...');
+
         const description = document.querySelector('#description').value;
         const fileInput = document.querySelector('#photo-file');
 
         let photo = fileInput.files[0] || this._capturedBlob;
 
-        if (!photo || !this._selectedLat || !this._selectedLon) {
+        if (!photo || this._selectedLat == null || this._selectedLon == null) {
           this._view.showError('Lengkapi data');
           return;
         }
