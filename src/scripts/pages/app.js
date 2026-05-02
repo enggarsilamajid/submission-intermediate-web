@@ -43,9 +43,9 @@ class App {
 
     if (token) {
       html += `
-        <li><button id="btn-subscribe">...</button></li>
         <li><a href="#/add">Tambah Data</a></li>
         <li><a href="#" id="logout-btn">Logout</a></li>
+        <li><button id="btn-subscribe">...</button></li>
       `;
     } else {
       html += `
