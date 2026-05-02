@@ -43,7 +43,6 @@ class App {
 
     if (token) {
       html += `
-        <li><button id="btn-subscribe">Aktifkan Notifikasi</button></li>
         <li><a href="#/add">Tambah Data</a></li>
         <li><a href="#" id="logout-btn">Logout</a></li>
       `;
