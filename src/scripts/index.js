@@ -23,7 +23,6 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       swRegistration = await navigator.serviceWorker.register('/service-worker.js');
-      alert('SW registered');
     } catch (e) {
       alert('SW gagal: ' + e.message);
     }
@@ -38,13 +37,19 @@ window.getPushSubscription = async function () {
 window.subscribePush = async function () {
   if (!swRegistration) {
     alert('SW belum siap');
-    return;
+    return null;
+  }
+
+  const existing = await swRegistration.pushManager.getSubscription();
+  if (existing) {
+    alert('Sudah aktif');
+    return existing;
   }
 
   const permission = await Notification.requestPermission();
   if (permission !== 'granted') {
     alert('izin ditolak');
-    return;
+    return null;
   }
 
   const vapidPublicKey = 'ISI_VAPID_KEY_DISINI';
@@ -64,7 +69,7 @@ window.subscribePush = async function () {
     body: JSON.stringify(subscription),
   });
 
-  alert('Notifikasi aktif');
+  return subscription;
 };
 
 window.unsubscribePush = async function () {
@@ -81,7 +86,6 @@ window.unsubscribePush = async function () {
   });
 
   await sub.unsubscribe();
-  alert('Notifikasi dimatikan');
 };
 
 function urlBase64ToUint8Array(base64String) {
