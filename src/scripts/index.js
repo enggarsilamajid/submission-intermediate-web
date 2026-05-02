@@ -3,6 +3,8 @@ import 'leaflet/dist/leaflet.css';
 
 import App from './pages/app';
 
+let swRegistration = null;
+
 document.addEventListener('DOMContentLoaded', async () => {
   const app = new App({
     content: document.querySelector('#main-content'),
@@ -19,14 +21,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
-    await navigator.serviceWorker.register('/service-worker.js');
+    try {
+      swRegistration = await navigator.serviceWorker.register('/service-worker.js');
+      alert('SW registered');
+    } catch (e) {
+      alert('SW gagal: ' + e.message);
+    }
   });
 }
 
 window.subscribePush = async function () {
   alert('klik tombol');
 
-  const registration = await navigator.serviceWorker.ready;
+  if (!swRegistration) {
+    alert('SW belum siap');
+    return;
+  }
+
   alert('service worker ready');
 
   const permission = await Notification.requestPermission();
@@ -40,7 +51,7 @@ window.subscribePush = async function () {
   const vapidPublicKey = 'ISI_VAPID_KEY_DISINI';
   const convertedKey = urlBase64ToUint8Array(vapidPublicKey);
 
-  const subscription = await registration.pushManager.subscribe({
+  const subscription = await swRegistration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: convertedKey,
   });
