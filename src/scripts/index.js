@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     drawerButton: document.querySelector('#drawer-button'),
     navigationDrawer: document.querySelector('#navigation-drawer'),
   });
+
   await app.renderPage();
 
   window.addEventListener('hashchange', async () => {
@@ -22,19 +23,29 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-async function subscribePush() {
+window.subscribePush = async function () {
+  alert('klik tombol');
+
   const registration = await navigator.serviceWorker.ready;
+  alert('service worker ready');
 
   const permission = await Notification.requestPermission();
-  if (permission !== 'granted') return;
+  alert('permission: ' + permission);
 
-  const vapidPublicKey = 'BElx...GANTI_DENGAN_KEY_DARI_API';
+  if (permission !== 'granted') {
+    alert('izin ditolak');
+    return;
+  }
+
+  const vapidPublicKey = 'ISI_VAPID_KEY_DISINI';
   const convertedKey = urlBase64ToUint8Array(vapidPublicKey);
 
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: convertedKey,
   });
+
+  alert('berhasil subscribe');
 
   await fetch('https://story-api.dicoding.dev/v1/notifications/subscribe', {
     method: 'POST',
@@ -44,7 +55,9 @@ async function subscribePush() {
     },
     body: JSON.stringify(subscription),
   });
-}
+
+  alert('terkirim ke server');
+};
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);

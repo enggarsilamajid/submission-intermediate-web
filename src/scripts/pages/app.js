@@ -75,7 +75,8 @@ class App {
     const btn = document.querySelector('#btn-subscribe');
     if (btn) {
       btn.addEventListener('click', async () => {
-        await subscribePush();
+        alert('button clicked');
+        await window.subscribePush();
         btn.innerText = 'Notifikasi Aktif';
         btn.disabled = true;
       });
@@ -83,25 +84,25 @@ class App {
   }
 
   async renderPage() {
-  const url = getActiveRoute();
-  const page = routes[url];
+    const url = getActiveRoute();
+    const page = routes[url];
 
-  const render = async () => {
-    this.#content.innerHTML = await page.render();
-    this._updateNav();
-    await page.afterRender();
-  };
+    const render = async () => {
+      this.#content.innerHTML = await page.render();
+      this._updateNav();
+      await page.afterRender();
+    };
 
-  if (document.startViewTransition) {
-    await document.startViewTransition(render);
-  } else {
-    this.#content.classList.add('fade-out');
-    await new Promise((r) => setTimeout(r, 200));
-    await render();
-    this.#content.classList.remove('fade-out');
-    this.#content.classList.add('fade-in');
+    if (document.startViewTransition) {
+      await document.startViewTransition(render);
+    } else {
+      this.#content.classList.add('fade-out');
+      await new Promise((r) => setTimeout(r, 200));
+      await render();
+      this.#content.classList.remove('fade-out');
+      this.#content.classList.add('fade-in');
+    }
   }
-}
 }
 
 export default App;
