@@ -45,6 +45,7 @@ class App {
       html += `
         <li><a href="#/add">Tambah Data</a></li>
         <li><a href="#" id="logout-btn">Logout</a></li>
+        <li><button id="btn-subscribe">Aktifkan Notifikasi</button></li>
       `;
     } else {
       html += `
