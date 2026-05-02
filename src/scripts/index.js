@@ -23,6 +23,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       swRegistration = await navigator.serviceWorker.register('/service-worker.js');
+      alert('SW registered');
     } catch (e) {
       alert('SW gagal: ' + e.message);
     }
@@ -35,57 +36,82 @@ window.getPushSubscription = async function () {
 };
 
 window.subscribePush = async function () {
-  if (!swRegistration) {
-    alert('SW belum siap');
+  try {
+    if (!swRegistration) {
+      alert('SW belum siap');
+      return null;
+    }
+
+    const existing = await swRegistration.pushManager.getSubscription();
+    if (existing) {
+      alert('Sudah aktif');
+      return existing;
+    }
+
+    const permission = await Notification.requestPermission();
+    alert('permission: ' + permission);
+
+    if (permission !== 'granted') {
+      alert('izin ditolak');
+      return null;
+    }
+
+    const vapidPublicKey = 'ISI_VAPID_KEY_DISINI';
+
+    if (!vapidPublicKey || vapidPublicKey.includes('ISI')) {
+      alert('VAPID key belum diisi');
+      return null;
+    }
+
+    const convertedKey = urlBase64ToUint8Array(vapidPublicKey);
+
+    const subscription = await swRegistration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: convertedKey,
+    });
+
+    alert('subscribe berhasil');
+
+    const res = await fetch('https://story-api.dicoding.dev/v1/notifications/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(subscription),
+    });
+
+    const json = await res.json();
+    alert('server response: ' + JSON.stringify(json));
+
+    return subscription;
+
+  } catch (err) {
+    alert('ERROR: ' + err.message);
     return null;
   }
-
-  const existing = await swRegistration.pushManager.getSubscription();
-  if (existing) {
-    alert('Sudah aktif');
-    return existing;
-  }
-
-  const permission = await Notification.requestPermission();
-  if (permission !== 'granted') {
-    alert('izin ditolak');
-    return null;
-  }
-
-  const vapidPublicKey = 'ISI_VAPID_KEY_DISINI';
-  const convertedKey = urlBase64ToUint8Array(vapidPublicKey);
-
-  const subscription = await swRegistration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: convertedKey,
-  });
-
-  await fetch('https://story-api.dicoding.dev/v1/notifications/subscribe', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-    body: JSON.stringify(subscription),
-  });
-
-  return subscription;
 };
 
 window.unsubscribePush = async function () {
-  const sub = await window.getPushSubscription();
-  if (!sub) return;
+  try {
+    const sub = await window.getPushSubscription();
+    if (!sub) return;
 
-  await fetch('https://story-api.dicoding.dev/v1/notifications/subscribe', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-    body: JSON.stringify(sub),
-  });
+    await fetch('https://story-api.dicoding.dev/v1/notifications/subscribe', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(sub),
+    });
 
-  await sub.unsubscribe();
+    await sub.unsubscribe();
+    alert('Notifikasi dimatikan');
+
+  } catch (err) {
+    alert('ERROR unsubscribe: ' + err.message);
+  }
 };
 
 function urlBase64ToUint8Array(base64String) {
