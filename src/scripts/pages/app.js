@@ -86,15 +86,29 @@ class App {
         btn.disabled = true;
         btn.innerText = 'Memproses...';
 
-        const sub = await window.getPushSubscription();
+        try {
+          const sub = await window.getPushSubscription();
 
-        if (sub) {
-          await window.unsubscribePush();
-        } else {
-          await window.subscribePush();
+          if (sub) {
+            await window.unsubscribePush();
+          } else {
+            const result = await window.subscribePush();
+
+            if (!result) {
+              btn.innerText = 'Aktifkan Notifikasi';
+              btn.disabled = false;
+              return;
+            }
+          }
+
+          const newSub = await window.getPushSubscription();
+          btn.innerText = newSub ? 'Nonaktifkan Notifikasi' : 'Aktifkan Notifikasi';
+
+        } catch (e) {
+          alert('Gagal: ' + e.message);
+          btn.innerText = 'Aktifkan Notifikasi';
         }
 
-        await updateButton();
         btn.disabled = false;
       });
     }
