@@ -20,17 +20,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      await navigator.serviceWorker.register('/service-worker.js');
+      await navigator.serviceWorker.register('./service-worker.js');
       await navigator.serviceWorker.ready;
     } catch (e) {
-      alert('SW gagal: ' + e.message);
+      alert('SW ERROR: ' + e.message);
     }
   });
 }
 
 window.getPushSubscription = async function () {
-  const reg = await navigator.serviceWorker.ready;
-  return await reg.pushManager.getSubscription();
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    return await reg.pushManager.getSubscription();
+  } catch {
+    return null;
+  }
 };
 
 window.subscribePush = async function () {
@@ -38,14 +42,10 @@ window.subscribePush = async function () {
     const reg = await navigator.serviceWorker.ready;
 
     const existing = await reg.pushManager.getSubscription();
-    if (existing) {
-      return existing;
-    }
+    if (existing) return existing;
 
     const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      return null;
-    }
+    if (permission !== 'granted') return null;
 
     const vapidPublicKey = 'BEl62iUYgUivh9z8m0vG0pN7qk1m6v0ZC4m9o6K5R9lF0n1rF2Q3pW8sV5bY7xT8k2zM3aB4cD5eF6gH7iJ8kL';
     const convertedKey = urlBase64ToUint8Array(vapidPublicKey);
@@ -65,7 +65,6 @@ window.subscribePush = async function () {
     });
 
     return subscription;
-
   } catch (err) {
     alert('ERROR: ' + err.message);
     return null;
@@ -88,7 +87,6 @@ window.unsubscribePush = async function () {
     });
 
     await sub.unsubscribe();
-
   } catch (err) {
     alert('ERROR unsubscribe: ' + err.message);
   }
