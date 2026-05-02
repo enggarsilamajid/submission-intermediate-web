@@ -22,8 +22,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      swRegistration = await navigator.serviceWorker.register('/service-worker.js');
-      alert('SW registered');
+      const reg = await navigator.serviceWorker.register('/service-worker.js');
+
+      await navigator.serviceWorker.ready;
+
+      swRegistration = reg;
+
+      alert('SW siap digunakan');
     } catch (e) {
       alert('SW gagal: ' + e.message);
     }
@@ -37,8 +42,8 @@ window.getPushSubscription = async function () {
 
 window.subscribePush = async function () {
   try {
-    if (!swRegistration) {
-      alert('SW belum siap');
+    if (!swRegistration || !navigator.serviceWorker.controller) {
+      alert('Service Worker belum aktif');
       return null;
     }
 
@@ -57,11 +62,6 @@ window.subscribePush = async function () {
     }
 
     const vapidPublicKey = 'BEl62iUYgUivh9z8m0vG0pN7qk1m6v0ZC4m9o6K5R9lF0n1rF2Q3pW8sV5bY7xT8k2zM3aB4cD5eF6gH7iJ8kL';
-
-    if (!vapidPublicKey || vapidPublicKey.includes('ISI')) {
-      alert('VAPID key belum diisi');
-      return null;
-    }
 
     const convertedKey = urlBase64ToUint8Array(vapidPublicKey);
 
